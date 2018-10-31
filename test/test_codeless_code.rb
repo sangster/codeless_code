@@ -1,7 +1,11 @@
 require 'helper'
 
-class TestCodelessCode < MiniTest::Test
-  def test_something_for_real
-    flunk "hey buddy, you should probably rename this file and start testing for real"
+class TestCodelessCode < UnitTest
+  def test_data_dir
+    assert_kind_of Pathname, CodelessCode::DATA_DIR
+    assert_predicate CodelessCode::DATA_DIR, :frozen?
+
+    assert_predicate CodelessCode::DATA_DIR.glob('*'), :any?
   end
 end
+
