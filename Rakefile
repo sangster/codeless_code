@@ -12,6 +12,7 @@ rescue Bundler::BundlerError => e
 end
 
 require 'jeweler'
+require 'pathname'
 require 'pry-byebug'
 require 'rake'
 require 'rake/testtask'
@@ -53,5 +54,13 @@ Reek::Rake::Task.new do |t|
 end
 
 YARD::Rake::YardocTask.new
+
+Rake::Task['console'].clear
+desc 'Start Pry with all runtime dependencies loaded'
+task :console do
+  include CodelessCode
+  pry
+  # Pry::CLI.start(Pry::CLI.parse_options(['--exec', 'cd CodelessCode']))
+end
 
 task default: :test

@@ -1,6 +1,14 @@
 require 'helper'
 
 class TestLanguageSet < UnitTest
+  def test_class_available_languages
+    assert_kind_of Enumerable, LanguageSet.available_languages
+
+    LanguageSet.available_languages.each do |lang|
+      assert_kind_of Symbol, lang
+    end
+  end
+
   def test_lang
     assert_equal :en, set(:en).lang
     assert_equal :zh, set(:zh).lang

@@ -10,7 +10,7 @@ module CodelessCode
     attr_reader :read_headers
 
     alias_method :read_headers?, :read_headers
-    def_delegators :headers, :[], :fetch
+    def_delegators :headers, :[], :fetch, :key?
 
     def initialize(file)
       self.file = file

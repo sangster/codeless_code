@@ -1,6 +1,10 @@
 module CodelessCode
   class FableSet
+    extend Forwardable
+    include Enumerable
+
     attr_accessor :dir
+    def_delegator :fables, :each
 
     def initialize(dir)
       self.dir = dir
