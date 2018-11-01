@@ -10,8 +10,12 @@ module CodelessCode
         @filters = filters.flatten
       end
 
+      def enabled?
+        any?(&:enabled?)
+      end
+
       def call(fable)
-        all? { |filter| filter.call(fable) }
+        select(&:enabled?).all? { |filter| filter.call(fable) }
       end
     end
   end

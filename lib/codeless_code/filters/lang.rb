@@ -5,6 +5,10 @@ module CodelessCode
         @exact = exact
       end
 
+      def enabled?
+        @exact
+      end
+
       def call(fable)
         @exact.nil? || @exact == fable.lang
       end

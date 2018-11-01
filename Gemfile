@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'slop', '~> 4.6'
+
 group :development do
   gem 'bundler', '~> 1.17'
   gem 'guard', '~> 2.14'

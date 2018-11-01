@@ -8,6 +8,10 @@ module CodelessCode
         @exclude = exclude
       end
 
+      def enabled?
+        @exact || @min || @max || @exclude
+      end
+
       def call(fable)
         if (date = fable.date)
           return false unless @exact.nil? || val == @exact

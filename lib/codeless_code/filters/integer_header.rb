@@ -9,6 +9,10 @@ module CodelessCode
         @exclude = exclude
       end
 
+      def enabled?
+        @exact || @min || @max || @exclude
+      end
+
       def call(fable)
         if fable.header?(@key) && (val = fable[@key]&.to_i)
           return false unless @exact.nil? || val == @exact

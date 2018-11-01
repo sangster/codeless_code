@@ -19,14 +19,18 @@ module CodelessCode
     end
 
     def fables
-      files.map { |f| Fable.new(f) }.sort_by(&:number)
+      @fables ||= files.map { |f| Fable.new(f) }.sort_by(&:number)
     end
+
+    def filter(filt)
+      select { |f| filt.call(f) }
+    end
+
+    private
 
     def files
       dir.glob('*.txt')
     end
-
-    private
 
     def name_parts
       dir.basename.to_s.split('-')

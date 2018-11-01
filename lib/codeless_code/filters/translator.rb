@@ -6,6 +6,10 @@ module CodelessCode
         @casecmp = casecmp
       end
 
+      def enabled?
+        @exact || @casecmp
+      end
+
       def call(fable)
         return false unless @exact.nil? || @exact == fable.translator
         @casecmp.nil? || @casecmp.casecmp?(fable.translator)
