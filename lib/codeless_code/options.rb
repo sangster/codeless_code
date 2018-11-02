@@ -11,8 +11,12 @@ module CodelessCode
       @opts = opts
     end
 
+    def lang
+      @opts[:lang]&.to_sym || :en
+    end
+
     def enabled?
-      @opts[:lang] || non_defaults_enabled?
+      @opts.key?(:lang) || non_defaults_enabled?
     end
 
     def composite_filter
@@ -21,7 +25,7 @@ module CodelessCode
 
     def filters
       @filters ||= [
-        Filters::Lang.new(exact: @opts[:lang]&.to_sym || :en),
+        Filters::Lang.new(exact: lang),
 
         Filters::Translator.new(exact: @opts[:translator_exact],
                                 casecmp: @opts[:translator]),

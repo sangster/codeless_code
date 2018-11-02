@@ -3,19 +3,10 @@ module CodelessCode
     extend Forwardable
     include Enumerable
 
+    NotFoundError = Class.new(StandardError)
+
     attr_accessor :lang, :root_dir
     def_delegator :fable_sets, :each
-
-    class << self
-      def available_languages(root_dir = DATA_DIR)
-        root_dir.glob('*-*')
-                .select(&:directory?)
-                .map { |dir| dir.basename.to_s.split('-').first }
-                .uniq
-                .map(&:to_sym)
-                .sort
-      end
-    end
 
     def initialize(lang, root_dir: DATA_DIR)
       self.lang = lang

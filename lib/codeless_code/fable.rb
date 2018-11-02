@@ -21,6 +21,7 @@ module CodelessCode
     def body
       @body ||= read_body.freeze
     end
+    alias_method :to_s, :body
 
     def headers
       @headers ||= begin
@@ -92,7 +93,7 @@ module CodelessCode
         until io.eof?
           @body_pos = io.pos
           if (m = HEADER_PATTERN.match(io.gets))
-            head[m[1]] = m[2]
+            head[m[1].strip] = m[2]&.strip
           else
             break
           end

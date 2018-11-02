@@ -1,6 +1,6 @@
 module CodelessCode
   module Filters
-    class IntegerHeader
+    class HeaderInteger
       def initialize(key, exact: nil, min: nil, max: nil, exclude: false)
         @key = key
         @exact = exact

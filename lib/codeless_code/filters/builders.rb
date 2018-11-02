@@ -3,18 +3,18 @@ module CodelessCode
     module Builders
       module_function
 
-      def integer_header_filter(name)
-        subclass_filter(IntegerHeader, name)
+      def header_integer_filter(name)
+        subclass_filter(HeaderInteger, name)
       end
 
-      def string_header_filter(name)
-        subclass_filter(StringHeader, name)
+      def header_string_filter(name)
+        subclass_filter(HeaderString, name)
       end
 
       def subclass_filter(klass, name)
         const_set(name, Class.new(klass) do
           def initialize(*args)
-            super(self.class.class_name, *args)
+            super(self.class.name.split(':').last, *args)
           end
         end)
       end

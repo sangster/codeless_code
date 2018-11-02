@@ -1,6 +1,6 @@
 module CodelessCode
   module Filters
-    class StringHeader
+    class HeaderString
       def initialize(key, exact: nil, start_with: nil, end_with: nil,
                           exclude: false)
         @key = key

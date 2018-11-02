@@ -5,10 +5,17 @@ module CodelessCode
   DATA_DIR = Pathname.new(__dir__)
                      .join('..', 'data', 'the-codeless-code').freeze
 
+  autoload  :Catalog,        'codeless_code/catalog'
+  autoload  :Cli,            'codeless_code/cli'
   autoload  :Fable,          'codeless_code/fable'
   autoload  :FableSet,       'codeless_code/fable_set'
   autoload  :Filters,        'codeless_code/filters'
   autoload  :LanguageSet,    'codeless_code/language_set'
   autoload  :Options,        'codeless_code/options'
   autoload  :OptionsParser,  'codeless_code/options_parser'
+
+  module Renderers
+    autoload  :Fable,  'codeless_code/renderers/fable'
+    autoload  :Page,   'codeless_code/renderers/page'
+  end
 end
