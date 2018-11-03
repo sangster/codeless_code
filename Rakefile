@@ -59,8 +59,20 @@ Rake::Task['console'].clear
 desc 'Start Pry with all runtime dependencies loaded'
 task :console do
   include CodelessCode
-  pry
-  # Pry::CLI.start(Pry::CLI.parse_options(['--exec', 'cd CodelessCode']))
+  pry # Pry::CLI.start(Pry::CLI.parse_options(['--exec', 'cd CodelessCode']))
+end
+
+namespace :readme do
+  readme = Pathname.new(__dir__).join('README.md')
+
+  desc 'Update README with the app\'s options'
+  task :options do
+    help = CodelessCode::Options.new('codeless_code', []).help.gsub(/\s+$/, '')
+    readme.write(
+      readme.read.gsub(/(^\s*## Current Options).+?(^\s*#)/m,
+                       format("\\1\n\n```\n%s```\n\\2", help))
+    )
+  end
 end
 
 task default: :test

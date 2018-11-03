@@ -35,10 +35,10 @@ module CodelessCode
     '%<cmd>s [OPTION]... [FILTER]... [NUMBER]'
   ].freeze
 
-  OPTIONS = proc do |o|
+  OPTIONS = proc do |cmd, o|
     banner = [[BANNERS[0]] + BANNERS[1..-1].map { |s| "\n       #{s}" }].join
 
-    o.banner = format("Usage: #{banner}", cmd: $0)
+    o.banner = format("Usage: #{banner}", cmd: cmd)
     o.separator ''
     o.separator 'Print or filter Codeless Code fables.'
 

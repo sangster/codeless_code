@@ -15,7 +15,8 @@ module CodelessCode
 
     def opts
       @opts ||=
-        Slop.parse([@command_name] + @argv, &CodelessCode::OPTIONS).tap do |opt|
+        Slop.parse([@command_name] + @argv,
+                   &CodelessCode::OPTIONS.curry[@command_name]).tap do |opt|
           if opt.arguments.size > 2
             raise format('too many arguments: %p', opt.arguments[1..-1])
           end
