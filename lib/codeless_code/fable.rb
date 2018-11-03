@@ -98,9 +98,18 @@ module CodelessCode
             break
           end
         end
+
+        massage_headers(head)
       end
     ensure
       io&.close
+    end
+
+    def massage_headers(head)
+      if head.key?('Series')
+        head['Series'] = head['Title']
+        head['Title'] = head.delete('Subtitle')
+      end
     end
 
     def list(key)

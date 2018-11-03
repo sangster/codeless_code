@@ -3,6 +3,7 @@ module CodelessCode
     autoload  :Builders,       'codeless_code/filters/builders'
     autoload  :Composite,      'codeless_code/filters/composite'
     autoload  :Date,           'codeless_code/filters/date'
+    autoload  :FromOptions,    'codeless_code/filters/from_options'
     autoload  :HeaderInteger,  'codeless_code/filters/header_integer'
     autoload  :Lang,           'codeless_code/filters/lang'
     autoload  :HeaderString,   'codeless_code/filters/header_string'
@@ -12,6 +13,7 @@ module CodelessCode
 
     header_string_filter 'Credits'
     header_string_filter 'Name'
+    header_string_filter 'Series'
     header_string_filter 'Tagline'
     header_string_filter 'Title'
 

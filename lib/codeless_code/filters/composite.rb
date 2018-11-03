@@ -4,7 +4,8 @@ module CodelessCode
       extend Forwardable
       include Enumerable
 
-      def_delegators :@filters, :push, :<<, :[], :each
+      attr_reader :filters
+      def_delegators :filters, :push, :<<, :[], :each
 
       def initialize(*filters)
         @filters = filters.flatten

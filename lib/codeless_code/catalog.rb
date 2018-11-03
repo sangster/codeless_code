@@ -18,6 +18,7 @@ module CodelessCode
                              .sort
     end
 
+    # @return [LanguageSet]
     def fetch(lang)
       if languages.include?(lang)
         LanguageSet.new(lang)

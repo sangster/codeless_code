@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'colorize', '~> 0.8'
+gem 'mediacloth', '~> 0.6'
 gem 'slop', '~> 4.6'
 
 group :development do

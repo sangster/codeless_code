@@ -3,10 +3,10 @@ module CodelessCode
     class Fable < SimpleDelegator
       HEADER_SORT = %w[Tagline Number Date].freeze
 
-      def for_pager
+      def for_pager(format = Formats::Raw)
         Page.new.tap do |page|
           page.title = best_title
-          page.body = body
+          page.body = format.new(body).call
 
           headers_no_best_title.map { |k, v| page.add_header(k, v) }
         end
@@ -19,9 +19,13 @@ module CodelessCode
       private
 
       def best_title
-        return title if title&.size&.positive?
+        return title_with_subtitle if title&.size&.positive?
 
         self['Name'] || self['Tagline'] || inspect
+      end
+
+      def title_with_subtitle
+        [self['Series'], title].compact.join(': ')
       end
 
       def headers_no_best_title

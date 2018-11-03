@@ -19,7 +19,7 @@ module CodelessCode
           return false unless @exact.nil? || val == @exact
           return false unless @start_with.nil? || val.start_with?(@start_with)
           return false unless @end_with.nil? || val.end_with?(@end_with)
-          true
+          !@exclude
         else
           @exclude
         end
