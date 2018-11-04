@@ -3,7 +3,55 @@
 Search and print [The Codeless Code](http://thecodelesscode.com/contents)
 fables.
 
-## Current Options
+## Installation
+
+```sh
+gem install codeless_code
+```
+
+## Usage
+
+The main use-case is to filter through the fables available in a given language.
+If multiple results are returned, their numbers and titles will be listed. If
+only one result is found, it will be show to you.
+
+When showing a single fable, it will be shown via your `PAGER`, if set. You may
+force writing do STDOUT, by providing the `-o -` argument.
+
+### Basic Examples
+
+```sh
+codeless_code           # list the fables for the default language (en)
+codeless_code 123       # print the fable numbered as "123"
+codeless_code --daily   # print the daily fable
+codeless_code --random  # print a random fable
+codeless_code -h        # get help
+```
+
+### Choosing a Data Set
+
+There are different translations available, but different people
+
+```sh
+codeless_code --list-translations  # see what languages you can use
+codeless_code -L zh                # list fables translated into Chinese
+codeless_code -L ru -R edro        # list fables translated into Russian by edro
+
+codeless_code -L fr --daily        # Print today's French fable
+```
+
+### Filtering
+
+You can combine many filters together. Only those fables which match every term
+will be returned.
+
+```sh
+# Find fables written on or after 2014, with at least a geekiness rating of 2,
+# and isn't part of a series
+codeless_code -Da 2014 -Gg 2 -nS
+```
+
+### Current Options
 
 ```
 Usage: codeless_code [INFO]
@@ -13,10 +61,12 @@ Usage: codeless_code [INFO]
 Print or filter Codeless Code fables.
 
 Info
-    --list-translations
     -h, --help
+    --list-translations
+    --version
 
 Options
+    -o, --output            write to the given file. "-" for STDOUT
     -f, --format            one of: raw, term (default)
     -p, --path              path to directory of fables. see github.com/aldesantis/the-codeless-code
     --random                select one fable, randomly, from the filtered list
