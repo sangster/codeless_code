@@ -47,8 +47,10 @@ module CodelessCode
 
     def filter_fables(io)
       filter = Filters::FromOptions.new(options)
+      fallback = options[:trace] ? nil : Formats::Raw
 
-      Commands::FilterFables.new(filter, output_format, io: io)
+      Commands::FilterFables.new(filter, output_format, io: io,
+                                 fallback_filter: fallback)
                             .call(&method(:select))
     end
 

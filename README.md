@@ -72,6 +72,7 @@ Options
     --random                select one fable, randomly, from the filtered list
     --random-set            select n fables, randomly, from the filtered list
     --daily                 select one fable, randomly, from the filtered listbased on today's date
+    --trace                 print full error message if a fable fails to parse
 
 Series Filters
     -S, --series

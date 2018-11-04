@@ -18,10 +18,11 @@ module CodelessCode
     class FilterFables
       # @param io [IO] if given, the output will be written to this stream,
       #   otherwise we will attempt to invoke the user's PAGER app
-      def initialize(filter, format, io: nil)
+      def initialize(filter, format, io: nil, fallback_filter: Formats::Raw)
         @filter = filter
         @format = format
         @io = io
+        @fallback_filter = fallback_filter
       end
 
       def call
@@ -49,7 +50,7 @@ module CodelessCode
         if @io.nil? && ENV.key?('PAGER')
           pager(ENV['PAGER'], fable)
         else
-          puts render(fable).for_pager(@format)
+          puts render(fable).for_pager(@format, fallback: @fallback_filter)
         end
       end
 
@@ -57,7 +58,8 @@ module CodelessCode
         io = open format('|%s', cmd), 'w'
         pid = io.pid
 
-        io.write render(fable).for_pager(@format)
+        io.write render(fable).for_pager(@format,
+                                         fallback_filter: @fallback_filter)
         io.close
       end
 

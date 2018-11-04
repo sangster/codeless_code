@@ -73,6 +73,7 @@ module CodelessCode
     o.string '--random-set', 'select n fables, randomly, from the filtered list'
     o.boolean '--daily', 'select one fable, randomly, from the filtered list' \
                          'based on today\'s date'
+    o.boolean '--trace', 'print full error message if a fable fails to parse'
 
     o.separator ''
     o.separator 'Series Filters'
