@@ -70,8 +70,9 @@ module CodelessCode
 
     def output_format
       case options[:format]
-      when 'raw' then Formats::Raw
-      else Formats::Term
+      when 'plain' then Formats::Plain
+      when 'raw'   then Formats::Raw
+      else              Formats::Term
       end
     end
 
@@ -95,7 +96,7 @@ module CodelessCode
     end
 
     def version_str
-      format("%s %s\n\n%s\n\nSee <%s>", @command_name, VERSION,
+      format(['%s %s', '%s', 'See <%s>'].join("\n\n"), @command_name, VERSION,
              copyright_summary, 'https://github.com/sangster/codeless_code')
     end
 

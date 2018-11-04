@@ -13,6 +13,9 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
+require 'mediacloth'
+require 'nokogiri'
+
 module CodelessCode
   module Formats
     class Base
@@ -24,7 +27,14 @@ module CodelessCode
 
       protected
 
-      def formatted
+      def to_xhtml(str)
+        # MediaCloth expects XHTML-ish pages and chokes on ommited end tags
+        Nokogiri::HTML(str).css('body > *').to_xhtml
+      end
+
+      def from_wiki(str, generator)
+        return "" if str.length == 0
+        MediaCloth::wiki_to_html(str, generator: generator)
       end
     end
   end

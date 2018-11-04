@@ -30,10 +30,12 @@ module CodelessCode
   end
 
   module Formats
-    autoload  :Base,           'codeless_code/formats/base'
-    autoload  :Raw,            'codeless_code/formats/raw'
-    autoload  :Term,           'codeless_code/formats/term'
-    autoload  :TermGenerator,  'codeless_code/formats/term_generator'
+    autoload  :Base,            'codeless_code/formats/base'
+    autoload  :Plain,           'codeless_code/formats/plain'
+    autoload  :PlainGenerator,  'codeless_code/formats/plain_generator'
+    autoload  :Raw,             'codeless_code/formats/raw'
+    autoload  :Term,            'codeless_code/formats/term'
+    autoload  :TermGenerator,   'codeless_code/formats/term_generator'
   end
 
   module Renderers
@@ -67,7 +69,7 @@ module CodelessCode
     o.separator ''
     o.separator 'Options'
     o.string '-o', '--output', 'write to the given file. "-" for STDOUT'
-    o.string '-f', '--format', 'one of: raw, term (default)'
+    o.string '-f', '--format', 'one of: raw, plain, or term (default)'
     o.string '-p', '--path', 'path to directory of fables. ' \
                              'see github.com/aldesantis/the-codeless-code'
     o.boolean '--random', 'select one fable, randomly, from the filtered list'

@@ -13,36 +13,31 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
-require 'colorized_string'
 require 'mediacloth'
-require 'nokogiri'
 
 module CodelessCode
   module Formats
-    class Term < Base
+    class Plain < Base
       def call
         raw.split("\n\n")
            .map { |str| from_wiki(to_xhtml(regex(str))) }
            .join("\n\n")
       end
 
+      private
+
       def regex(str)
         [
           [/\/\/\w*$/, ''],
-          [/^\|   .*/, c('\\0').green],
-          [/<i>([^<]+)<\/i>/mi, "''\\1''"],
-          [/<b>([^<]+)<\/b>/mi, "'''\\1'''"],
-          [/<a[^>]+>([^<]+)<\/a>/mi, '[[\1]]'],
-          [/\/(\w+)\//, "''\\1''"],
+          [/<i>([^<]+)<\/i>/mi, '\1'],
+          [/<b>([^<]+)<\/b>/mi, '\1'],
+          [/<a[^>]+>([^<]+)<\/a>/mi, '\1'],
+          [/\/(\w+)\//, '\1'],
         ].inject(str) { |str, args| str = str.gsub(*args) }
       end
 
       def from_wiki(str)
-        super(str, TermGenerator.new(self))
-      end
-
-      def c(str)
-        ColorizedString.new(str)
+        super(str, PlainGenerator.new(self))
       end
     end
   end
