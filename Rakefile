@@ -37,15 +37,20 @@ require 'yard'
 require 'codeless_code'
 
 Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see
-  # http://guides.rubygems.org/specification-reference/ for more options
   gem.name = "codeless_code"
   gem.homepage = "https://github.com/sangster/codeless_code"
   gem.license = "GPL-3.0"
   gem.summary = 'Search and print The Codeless Code fables'
-  gem.description = 'Search and print The Codeless Code fables'
+  gem.description = <<-DESC.gsub(/\s+/m, ' ').strip
+    http://thecodelesscode.com contains many humorous and interesting fables
+    and koans. The authors have open-sourced these fables, and many
+    tanslations, available at https://github.com/aldesantis/the-codeless-code.
+
+    This tool provides a CLI to filter through these fables and view them.
+  DESC
   gem.email = "jon@ertt.ca"
   gem.authors = ["Jon Sangster"]
+  gem.files.include('data/**/*.txt')
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
