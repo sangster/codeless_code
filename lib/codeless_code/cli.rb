@@ -70,7 +70,6 @@ module CodelessCode
     end
 
     def select(fables)
-      # binding.pry
       select_rand(fables)
     end
 
@@ -97,7 +96,7 @@ module CodelessCode
     def copyright_summary
       template = [
         'Copyright (C) %<date>d  Jon Sangster',
-        'License GPL-3.0-only: GNU General Public License v3.0 only <%<url>s>',
+        'License GPL-3.0: GNU General Public License v3.0 <%<url>s>',
         'This is free software: you are free to change and redistribute it.',
         'There is NO WARRANTY, to the extent permitted by law.',
       ].join("\n")

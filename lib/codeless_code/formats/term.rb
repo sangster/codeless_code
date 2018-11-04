@@ -127,7 +127,6 @@ module CodelessCode
 
         #Reimplement this
         def parse_resource_link(ast)
-          binding.pry
           ast.children.map do |c|
             parse_internal_link_item(c) if c.class == InternalLinkItemAST
           end
@@ -135,7 +134,6 @@ module CodelessCode
 
         #Reimplement this
         def parse_category_link(ast)
-          binding.pry
           ast.children.map do |c|
             parse_internal_link_item(c) if c.class == InternalLinkItemAST
           end
@@ -143,25 +141,21 @@ module CodelessCode
 
         #Reimplement this
         def parse_internal_link_item(ast)
-          binding.pry
           parse_wiki_ast(ast)
         end
 
         #Reimplement this
         def parse_table(ast)
-          binding.pry
           parse_wiki_ast(ast)
         end
 
         #Reimplement this
         def parse_table_row(ast)
-          binding.pry
           parse_wiki_ast(ast)
         end
 
         #Reimplement this
         def parse_table_cell(ast)
-          binding.pry
           parse_wiki_ast(ast)
         end
 

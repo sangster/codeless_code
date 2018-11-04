@@ -41,7 +41,7 @@ Jeweler::Tasks.new do |gem|
   # http://guides.rubygems.org/specification-reference/ for more options
   gem.name = "codeless_code"
   gem.homepage = "https://github.com/sangster/codeless_code"
-  gem.license = "GPL-3.0-only"
+  gem.license = "GPL-3.0"
   gem.summary = 'Search and print The Codeless Code fables'
   gem.description = 'Search and print The Codeless Code fables'
   gem.email = "jon@ertt.ca"
@@ -74,7 +74,7 @@ Rake::Task['console'].clear
 desc 'Start Pry with all runtime dependencies loaded'
 task :console do
   include CodelessCode
-  pry # Pry::CLI.start(Pry::CLI.parse_options(['--exec', 'cd CodelessCode']))
+  pry
 end
 
 namespace :readme do
