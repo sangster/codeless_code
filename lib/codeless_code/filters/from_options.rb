@@ -27,7 +27,7 @@ module CodelessCode
       end
 
       def lang
-        @opts[:lang]&.to_sym || :en
+        @opts[:lang]&.to_sym || fallback_lang
       end
 
       def enabled?
@@ -57,6 +57,11 @@ module CodelessCode
       end
 
       private
+
+      def fallback_lang
+        lang = ENV['LANG']&.split(/_|\./)&.first&.downcase&.to_sym
+        Catalog.new.languages.include?(lang) ? lang : :en
+      end
 
       def non_defaults_enabled?
         filters.reject { |f| f.is_a?(Filters::Lang) }.any?(&:enabled?)

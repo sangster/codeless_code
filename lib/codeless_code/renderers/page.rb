@@ -81,7 +81,9 @@ module CodelessCode
 
       def content_width
         [
-          body.lines.map { |s| s.strip.size }.max || 0,
+          body.lines.map do |s|
+            ColorizedString[s].uncolorize.strip.size
+          end.max || 0,
           @headers.map(&method(:format_header)).map(&:size).max || 0
         ].max
       end
