@@ -58,8 +58,7 @@ module CodelessCode
         io = open format('|%s', cmd), 'w'
         pid = io.pid
 
-        io.write render(fable).for_pager(@format,
-                                         fallback_filter: @fallback_filter)
+        io.write render(fable).for_pager(@format, fallback: @fallback_filter)
         io.close
       end
 

@@ -22,7 +22,7 @@ module CodelessCode
     class Term < Base
       def call
         raw.split("\n\n")
-           .map { |str| generate(regex(to_xhtml(str))) }
+           .map { |str| generate(to_xhtml(regex(str))) }
            .join("\n\n")
       end
 
@@ -33,12 +33,12 @@ module CodelessCode
 
       def regex(str)
         [
-          [%r{//$}, ''],
+          [/\/\/\w*$/, ''],
           [/^\|   .*/, c('\\0').green],
           [/<i>([^<]+)<\/i>/mi, "''\\1''"],
           [/<b>([^<]+)<\/b>/mi, "'''\\1'''"],
           [/<a[^>]+>([^<]+)<\/a>/mi, '[[\1]]'],
-          # [/\/([^\/]*[^<])\//, "''\\1''"],
+          [/\/(\w+)\//, "''\\1''"],
         ].inject(str) { |str, args| str = str.gsub(*args) }
       end
 
