@@ -40,7 +40,7 @@ module CodelessCode
     autoload  :Page,   'codeless_code/renderers/page'
   end
 
-  VERSION = '0.0.1'.freeze
+  VERSION = Pathname.new(__dir__).join('..', 'VERSION').read.strip.freeze
   DEFAULT_DATA = Pathname.new(__dir__)
                      .join('..', 'data', 'the-codeless-code').freeze
 
