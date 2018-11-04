@@ -24,6 +24,7 @@ module CodelessCode
       end
 
       class Matcher
+        # param str [String] A date like +2010+, +2010-12+, or +2010-12-23+
         def self.parse(str)
           match = :day
 
@@ -58,10 +59,14 @@ module CodelessCode
         private
 
         def cmp(a, b, op, match)
-          case @match
-          when :year then a.year.send(op, b.year)
-          when :month then a.month.send(op, b.month) && cmp(a, b, op, :year)
-          else a.day.send(op, b.day) && cmp(a, b, op, :month)
+          binding.pry if !a.is_a?(::Date) || !b.is_a?(::Date)
+          case match
+          when :year
+            a.year.send(op, b.year)
+          when :month
+            a.year == b.year ? a.month.send(op, b.month) : cmp(a, b, op, :year)
+          else
+            a.send(op, b)
           end
         end
       end

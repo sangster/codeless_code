@@ -25,7 +25,7 @@ module CodelessCode
       end
 
       def title_with_subtitle
-        [self['Series'], title].compact.join(': ')
+        [self['Series'], title, self['Subtitle']].compact.join(': ')
       end
 
       def headers_no_best_title
