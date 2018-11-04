@@ -16,9 +16,12 @@
 module CodelessCode
   module Commands
     class FilterFables
-      def initialize(filter, format)
+      # @param io [IO] if given, the output will be written to this stream,
+      #   otherwise we will attempt to invoke the user's PAGER app
+      def initialize(filter, format, io: nil)
         @filter = filter
         @format = format
+        @io = io
       end
 
       def call
@@ -43,7 +46,7 @@ module CodelessCode
       end
 
       def show(fable)
-        if ENV.key?('PAGER')
+        if @io.nil? && ENV.key?('PAGER')
           pager(ENV['PAGER'], fable)
         else
           puts render(fable).for_pager(@format)
@@ -64,6 +67,10 @@ module CodelessCode
 
       def render(fable)
         Renderers::Fable.new(fable)
+      end
+
+      def puts(str)
+        (@io || $stdout).puts(str)
       end
     end
   end

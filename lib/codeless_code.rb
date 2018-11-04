@@ -64,6 +64,7 @@ module CodelessCode
 
     o.separator ''
     o.separator 'Options'
+    o.string '-o', '--output', 'write to the given file. "-" for STDOUT'
     o.string '-f', '--format', 'one of: raw, term (default)'
     o.string '-p', '--path', 'path to directory of fables. ' \
                              'see github.com/aldesantis/the-codeless-code'

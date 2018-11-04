@@ -13,6 +13,8 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
+require 'slop'
+
 module CodelessCode
   class Cli
     def initialize(command_name = $0, args = ARGV)
@@ -21,28 +23,43 @@ module CodelessCode
     end
 
     def call
+      io = io_open
+
       if options.key?(:help)
-        warn options.help
+        io.puts options.help
       elsif options.key?(:list_translations)
-        Commands::ListTranslations.new.call
+        Commands::ListTranslations.new(io: io).call
       else
-        filter_fables
+        filter_fables(io)
       end
+
+    rescue Slop::Error => e
+      warn format("%s\n\n%s", e, options.help)
+      exit 1
+    ensure
+      io&.close
     end
 
     private
 
-    def filter_fables
+    def filter_fables(io)
       filter = Filters::FromOptions.new(options)
 
-      Commands::FilterFables.new(filter, format).call(&method(:select))
+      Commands::FilterFables.new(filter, output_format, io: io)
+                            .call(&method(:select))
     end
 
     def options
       @options ||= Options.new(@command_name, @args)
     end
 
-    def format
+    def io_open
+      if (path = options[:output])
+        path == '-' ? $stdout.dup : File.open(path, 'w')
+      end
+    end
+
+    def output_format
       case options[:format]
       when 'raw' then Formats::Raw
       else Formats::Term
