@@ -1,4 +1,19 @@
 # encoding: utf-8
+# codeless_code filters and prints fables from http://thecodelesscode.com
+# Copyright (C) 2018  Jon Sangster
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 $LOAD_PATH.unshift(File.join(__dir__, 'lib'))
 
 require 'rubygems'
@@ -26,7 +41,7 @@ Jeweler::Tasks.new do |gem|
   # http://guides.rubygems.org/specification-reference/ for more options
   gem.name = "codeless_code"
   gem.homepage = "https://github.com/sangster/codeless_code"
-  gem.license = "MIT"
+  gem.license = "GPL-3.0-only"
   gem.summary = 'Search and print The Codeless Code fables'
   gem.description = 'Search and print The Codeless Code fables'
   gem.email = "jon@ertt.ca"

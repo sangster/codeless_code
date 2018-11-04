@@ -13,7 +13,8 @@ Info
     --list-translations
     -h, --help
 Options
-    --format                one of: raw, term (default)
+    -f, --format            one of: raw, term (default)
+    -p, --path              path to directory of fables. see github.com/aldesantis/the-codeless-code
 Series Filters
     -S, --series
     -Ss, --series-start     series starts with
@@ -33,7 +34,7 @@ Number Filters
     -hN, --has-number       has number listed
     -nN, --no-number        no number listed
 Language Filters
-    -l, -L, --lang          language code (default: en)
+    -L, --lang              language code (default: en)
 Translator Filters
     -r, --translator        translator's name (default: first one, alphabetically)
     -R, --translator-exact  translator's name, case-sensitive (default: first one, alphabetically)
@@ -63,7 +64,8 @@ Tagline Filters
     -Is, --tagline-start    tagline starts with
     -Ie, --tagline-end      tagline ends with
     -hI, --has-tagline      has tagline listed
-    -nI, --no-tagline       no tagline listed```
+    -nI, --no-tagline       no tagline listed
+```
 
 ## Contributing to codeless_code
 
@@ -82,4 +84,21 @@ Tagline Filters
 
 ## Copyright
 
-Copyright (c) 2018 Jon Sangster. See LICENSE.txt for further details.
+Copyright (C) 2018  Jon Sangster
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received [a copy](LICENSE) of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+The data this application uses by default, [*The Codeless
+Code*](http://www.thecodelesscode.com/about) by Qi is licensed under a
+[Creative Commons Attribution-NonCommercial 3.0 Unported
+License](https://creativecommons.org/licenses/by-nc/3.0/deed.en_US).

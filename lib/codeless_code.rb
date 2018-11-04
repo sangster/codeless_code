@@ -1,3 +1,18 @@
+# codeless_code filters and prints fables from http://thecodelesscode.com
+# Copyright (C) 2018  Jon Sangster
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 require 'pathname'
 
 module CodelessCode
@@ -26,7 +41,7 @@ module CodelessCode
   end
 
   VERSION = '0.0.1'.freeze
-  DATA_DIR = Pathname.new(__dir__)
+  DEFAULT_DATA = Pathname.new(__dir__)
                      .join('..', 'data', 'the-codeless-code').freeze
 
   BANNERS = [
@@ -49,7 +64,9 @@ module CodelessCode
 
     o.separator ''
     o.separator 'Options'
-    o.string '--format', 'one of: raw, term (default)'
+    o.string '-f', '--format', 'one of: raw, term (default)'
+    o.string '-p', '--path', 'path to directory of fables. ' \
+                             'see github.com/aldesantis/the-codeless-code'
 
     o.separator ''
     o.separator 'Series Filters'
@@ -77,7 +94,7 @@ module CodelessCode
 
     o.separator ''
     o.separator 'Language Filters'
-    o.string '-l', '-L', '--lang', 'language code (default: en)'
+    o.string '-L', '--lang', 'language code (default: en)'
 
     o.separator ''
     o.separator 'Translator Filters'
