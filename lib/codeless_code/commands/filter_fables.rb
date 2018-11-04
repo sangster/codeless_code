@@ -23,6 +23,7 @@ module CodelessCode
 
       def call
         fables = filtered_fables
+        fables = yield fables if block_given?
 
         case fables.size
         when 0

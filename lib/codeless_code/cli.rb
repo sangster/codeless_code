@@ -34,7 +34,8 @@ module CodelessCode
 
     def filter_fables
       filter = Filters::FromOptions.new(options)
-      Commands::FilterFables.new(filter, format).call
+
+      Commands::FilterFables.new(filter, format).call(&method(:select))
     end
 
     def options
@@ -45,6 +46,26 @@ module CodelessCode
       case options[:format]
       when 'raw' then Formats::Raw
       else Formats::Term
+      end
+    end
+
+    def select(fables)
+      # binding.pry
+      select_rand(fables)
+    end
+
+    def select_rand(fables)
+      if options[:daily]
+        fables.sample(1, random: Random.new(Date.today.strftime('%Y%m%d').to_i))
+      elsif (count = options[:random_set])
+        if count&.to_i&.to_s != count
+          raise ArgumentError, format('not a number %p', count)
+        end
+        fables.sample(count&.to_i)
+      elsif options[:random]
+        fables.sample(1)
+      else
+        fables
       end
     end
   end

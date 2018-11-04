@@ -67,6 +67,10 @@ module CodelessCode
     o.string '-f', '--format', 'one of: raw, term (default)'
     o.string '-p', '--path', 'path to directory of fables. ' \
                              'see github.com/aldesantis/the-codeless-code'
+    o.boolean '--random', 'select one fable, randomly, from the filtered list'
+    o.string '--random-set', 'select n fables, randomly, from the filtered list'
+    o.boolean '--daily', 'select one fable, randomly, from the filtered list' \
+                         'based on today\'s date'
 
     o.separator ''
     o.separator 'Series Filters'

@@ -74,7 +74,6 @@ module CodelessCode
         private
 
         def cmp(a, b, op, match)
-          binding.pry if !a.is_a?(::Date) || !b.is_a?(::Date)
           case match
           when :year
             a.year.send(op, b.year)
