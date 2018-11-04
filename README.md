@@ -33,11 +33,12 @@ codeless_code -h        # get help
 There are different translations available, but different people
 
 ```sh
+codeless_code -p /some/dir         # source the fables from a different folder
 codeless_code --list-translations  # see what languages you can use
 codeless_code -L zh                # list fables translated into Chinese
 codeless_code -L ru -R edro        # list fables translated into Russian by edro
 
-codeless_code -L fr --daily        # Print today's French fable
+codeless_code -L fr --daily        # print today's French fable
 ```
 
 ### Filtering
