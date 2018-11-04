@@ -25,7 +25,7 @@ module CodelessCode
     attr_accessor :lang, :root_dir
     def_delegator :fable_sets, :each
 
-    def initialize(lang, root_dir: DEFAULT_DATA)
+    def initialize(lang, root_dir:)
       self.lang = lang
       self.root_dir = root_dir
     end

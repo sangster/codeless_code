@@ -25,8 +25,8 @@ module CodelessCode
         @fallback_filter = fallback_filter
       end
 
-      def call
-        fables = filtered_fables
+      def call(catalog)
+        fables = catalog.select(@filter)
         fables = yield fables if block_given?
 
         case fables.size
@@ -40,11 +40,6 @@ module CodelessCode
       end
 
       private
-
-      # @return [Enumerable<Fable>]
-      def filtered_fables
-        Catalog.new.select(@filter)
-      end
 
       def show(fable)
         if @io.nil? && ENV.key?('PAGER')

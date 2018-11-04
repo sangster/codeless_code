@@ -18,19 +18,17 @@ module CodelessCode
     # extend Forwardable
     include Enumerable
 
-    attr_accessor :root_dir
-
-    def initialize(root_dir: DEFAULT_DATA)
-      self.root_dir = root_dir
+    def initialize(root_dir)
+      @root_dir = root_dir
     end
 
     def languages
-      @languages ||= root_dir.glob('*-*')
-                             .select(&:directory?)
-                             .map { |dir| dir.basename.to_s.split('-').first }
-                             .uniq
-                             .map(&:to_sym)
-                             .sort
+      @languages ||= @root_dir.glob('*-*')
+                              .select(&:directory?)
+                              .map { |dir| dir.basename.to_s.split('-').first }
+                              .uniq
+                              .map(&:to_sym)
+                              .sort
     end
 
     # @return [LanguageSet]
@@ -44,7 +42,7 @@ module CodelessCode
     end
 
     def language_sets
-      languages.map { |lang| LanguageSet.new(lang) }
+      languages.map { |lang| LanguageSet.new(lang, root_dir: @root_dir) }
     end
 
     def fable_sets

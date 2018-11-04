@@ -60,7 +60,7 @@ module CodelessCode
 
       def fallback_lang
         lang = ENV['LANG']&.split(/_|\./)&.first&.downcase&.to_sym
-        Catalog.new.languages.include?(lang) ? lang : :en
+        Catalog.new(@opts.data_dir).languages.include?(lang) ? lang : :en
       end
 
       def non_defaults_enabled?

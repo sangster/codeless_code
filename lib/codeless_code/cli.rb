@@ -31,7 +31,7 @@ module CodelessCode
       elsif options.key?(:version)
         (io || $stdout).puts version_str
       elsif options.key?(:list_translations)
-        Commands::ListTranslations.new(io: io).call
+        Commands::ListTranslations.new(catalog, io: io).call
       else
         filter_fables(io)
       end
@@ -49,13 +49,17 @@ module CodelessCode
       filter = Filters::FromOptions.new(options)
       fallback = options[:trace] ? nil : Formats::Raw
 
-      Commands::FilterFables.new(filter, output_format, io: io,
-                                 fallback_filter: fallback)
-                            .call(&method(:select))
+      cmd = Commands::FilterFables.new(filter, output_format, io: io,
+                                       fallback_filter: fallback)
+      cmd.call(catalog, &method(:select))
     end
 
     def options
       @options ||= Options.new(@command_name, @args)
+    end
+
+    def catalog
+      @catalog ||= Catalog.new(options.data_dir)
     end
 
     def io_open

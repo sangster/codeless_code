@@ -47,6 +47,10 @@ module CodelessCode
       !!self[key]
     end
 
+    def data_dir
+      @data_dir ||= self[:path] ? Pathname.new(self[:path]) : DEFAULT_DATA
+    end
+
     def help
       opts(suppress: true).to_s
     end

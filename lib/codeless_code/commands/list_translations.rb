@@ -18,12 +18,13 @@ module CodelessCode
     class ListTranslations
       # @param io [IO] if given, the output will be written to this stream,
       #   otherwise STDOUT will be used
-      def initialize(io: nil)
+      def initialize(catalog, io: nil)
+        @catalog = catalog
         @io = io
       end
 
       def call
-        Catalog.new.language_sets.each do |set|
+        @catalog.language_sets.each do |set|
           translators = set.fable_sets.map(&:translator).sort
           puts format('%s  %s', set.lang, translators.join(', '))
         end
