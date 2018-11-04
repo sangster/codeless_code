@@ -30,9 +30,10 @@ module CodelessCode
   end
 
   module Formats
-    autoload  :Base,  'codeless_code/formats/base'
-    autoload  :Raw,   'codeless_code/formats/raw'
-    autoload  :Term,  'codeless_code/formats/term'
+    autoload  :Base,           'codeless_code/formats/base'
+    autoload  :Raw,            'codeless_code/formats/raw'
+    autoload  :Term,           'codeless_code/formats/term'
+    autoload  :TermGenerator,  'codeless_code/formats/term_generator'
   end
 
   module Renderers

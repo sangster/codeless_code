@@ -18,7 +18,7 @@ module CodelessCode
     class Fable < SimpleDelegator
       HEADER_SORT = %w[Tagline Number Date].freeze
 
-      def for_pager(format, fallback: Formats::Raw)
+      def for_pager(format, fallback: nil)
         Page.new.tap do |page|
           page.title = best_title
           page.body = render_with(format, fallback: fallback)
@@ -33,7 +33,7 @@ module CodelessCode
 
       private
 
-      def render_with(format, fallback: nil)
+      def render_with(format, fallback:)
         format.new(body).call
       rescue => e
         raise e unless fallback
