@@ -59,8 +59,9 @@ module CodelessCode
 
     o.separator ''
     o.separator 'Info'
-    o.boolean '--list-translations'
     o.boolean '-h', '--help'
+    o.boolean '--list-translations'
+    o.boolean '--version'
 
     o.separator ''
     o.separator 'Options'

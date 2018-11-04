@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
+require 'date'
 require 'slop'
 
 module CodelessCode
@@ -26,7 +27,9 @@ module CodelessCode
       io = io_open
 
       if options.key?(:help)
-        io.puts options.help
+        (io || $stdout).puts options.help
+      elsif options.key?(:version)
+        (io || $stdout).puts version_str
       elsif options.key?(:list_translations)
         Commands::ListTranslations.new(io: io).call
       else
@@ -84,6 +87,23 @@ module CodelessCode
       else
         fables
       end
+    end
+
+    def version_str
+      format("%s %s\n\n%s\n\nSee <%s>", @command_name, VERSION,
+             copyright_summary, 'https://github.com/sangster/codeless_code')
+    end
+
+    def copyright_summary
+      template = [
+        'Copyright (C) %<date>d  Jon Sangster',
+        'License GPL-3.0-only: GNU General Public License v3.0 only <%<url>s>',
+        'This is free software: you are free to change and redistribute it.',
+        'There is NO WARRANTY, to the extent permitted by law.',
+      ].join("\n")
+
+      format(template, date: ::Date.today.year,
+                       url: 'http://gnu.org/licenses/gpl.html')
     end
   end
 end
