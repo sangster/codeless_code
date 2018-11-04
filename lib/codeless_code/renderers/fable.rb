@@ -18,10 +18,10 @@ module CodelessCode
     class Fable < SimpleDelegator
       HEADER_SORT = %w[Tagline Number Date].freeze
 
-      def for_pager(format = Formats::Raw)
+      def for_pager(format, fallback: Formats::Raw)
         Page.new.tap do |page|
           page.title = best_title
-          page.body = format.new(body).call
+          page.body = render_with(format, fallback: fallback)
 
           headers_no_best_title.map { |k, v| page.add_header(k, v) }
         end
@@ -32,6 +32,14 @@ module CodelessCode
       end
 
       private
+
+      def render_with(format, fallback: nil)
+        format.new(body).call
+      rescue => e
+        raise e unless fallback
+        warn format('Error parsing %s: %s', file, e.message.strip)
+        fallback.new(body).call
+      end
 
       def best_title
         return title_with_subtitle if title&.size&.positive?

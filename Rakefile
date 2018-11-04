@@ -89,7 +89,7 @@ namespace :readme do
   task :options do
     help = CodelessCode::Options.new('codeless_code', []).help.gsub(/ +$/, '')
     readme.write(
-      readme.read.gsub(/(^\s*## Current Options).+?(^\s*#)/m,
+      readme.read.gsub(/(^\s*#+ Current Options).+?(^\s*#)/m,
                        format("\\1\n\n```\n%s```\n\\2", help))
     )
   end
