@@ -33,6 +33,7 @@ module CodelessCode
         filter = Filters::FromOptions.new(options)
         fables = @catalog.select(filter)
         fables = yield fables if block_given?
+        fables = sort(fables)
 
         case fables.size
         when 0
@@ -45,6 +46,14 @@ module CodelessCode
       end
 
       private
+
+      def sort(fables)
+        if options.key?(:sort)
+          fables = fables.sort_by { |f| f[options[:sort]] || "\uffff" }
+        end
+        fables = fables.reverse if options[:reverse]
+        fables
+      end
 
       def show(fable)
         if @io.nil? && ENV.key?('PAGER')

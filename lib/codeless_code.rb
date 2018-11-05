@@ -82,6 +82,9 @@ module CodelessCode
                          'based on today\'s date'
     o.boolean '--trace', 'print full error message if a fable fails to parse'
 
+    o.string '-s', '--sort', 'when listing fables, sort by the given header'
+    o.boolean '-r', '--reverse', 'when listing fables, reverse the order'
+
     o.separator ''
     o.separator 'Series Filters'
     o.string '-S', '--series'
@@ -112,9 +115,9 @@ module CodelessCode
 
     o.separator ''
     o.separator 'Translator Filters'
-    o.string '-r', '--translator', 'translator\'s name (default: first ' \
+    o.string '-R', '--translator', 'translator\'s name (default: first ' \
       'one, alphabetically)'
-    o.string '-R', '--translator-exact', 'translator\'s name, ' \
+    o.string '-Rx', '--translator-exact', 'translator\'s name, ' \
       'case-sensitive (default: first one, alphabetically)'
 
     o.separator ''
