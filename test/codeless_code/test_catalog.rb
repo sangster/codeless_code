@@ -19,9 +19,7 @@ class TestCatalog < UnitTest
   def test_languages
     assert_kind_of Enumerable, catalog.languages
 
-    catalog.languages.each do |lang|
-      assert_kind_of Symbol, lang
-    end
+    catalog.languages.each { |lang| assert_kind_of Symbol, lang }
   end
 
   def test_fetch

@@ -52,4 +52,10 @@ require 'codeless_code'
 
 class UnitTest < MiniTest::Test
   include CodelessCode
+
+  def mock_filter(content)
+    StringIO.new(content.strip).tap do
+      |io| io.define_singleton_method(:open) { self }
+    end
+  end
 end

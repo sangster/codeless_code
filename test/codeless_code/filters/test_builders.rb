@@ -13,31 +13,20 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
-module CodelessCode
-  module Filters
-    class HeaderInteger
-      def initialize(key, exact: nil, min: nil, max: nil, exclude: false)
-        @key = key
-        @exact = exact
-        @min = min
-        @max = max
-        @exclude = exclude
-      end
+require 'helper'
 
-      def enabled?
-        @exact || @min || @max || @exclude
-      end
+module Filters
+  class TestBuilders < UnitTest
+    def test_header_integer_filter
+      assert_kind_of Class, Filters::Builders.header_integer_filter('FooOne')
+      assert_kind_of Filters::HeaderInteger,
+                     Filters::Builders.header_integer_filter('FooTwo').new
+    end
 
-      def call(fable)
-        if fable.header?(@key) && (val = fable[@key]&.to_i)
-          return false unless @exact.nil? || val == @exact
-          return false unless @min.nil? || val >= @min.to_i
-          return false unless @max.nil? || val <= @max.to_i
-          !@exclude
-        else
-          @exclude
-        end
-      end
+    def test_header_string_filter
+      assert_kind_of Class, Filters::Builders.header_string_filter('BarOne')
+      assert_kind_of Filters::HeaderString,
+                     Filters::Builders.header_string_filter('BarTwo').new
     end
   end
 end
