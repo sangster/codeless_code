@@ -15,18 +15,23 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Commands
+    # Filters down a {Catalog} of {Fable Fables} with criteria specified via
+    # the CLI. The results will be listed line-by-line, unless only one fable
+    # is found. In that case, it will be printed out.
     class FilterFables
+      attr_reader :options
+
       # @param io [IO] if given, the output will be written to this stream,
       #   otherwise we will attempt to invoke the user's PAGER app
-      def initialize(filter, format, io: nil, fallback_filter: Formats::Raw)
-        @filter = filter
-        @format = format
+      def initialize(catalog, options, io: nil)
+        @catalog = catalog
+        @options = options
         @io = io
-        @fallback_filter = fallback_filter
       end
 
-      def call(catalog)
-        fables = catalog.select(@filter)
+      def call
+        filter = Filters::FromOptions.new(options)
+        fables = @catalog.select(filter)
         fables = yield fables if block_given?
 
         case fables.size
@@ -45,7 +50,7 @@ module CodelessCode
         if @io.nil? && ENV.key?('PAGER')
           pager(ENV['PAGER'], fable)
         else
-          puts render(fable).for_pager(@format, fallback: @fallback_filter)
+          puts for_pager(fable)
         end
       end
 
@@ -53,12 +58,41 @@ module CodelessCode
         io = open format('|%s', cmd), 'w'
         pid = io.pid
 
-        io.write render(fable).for_pager(@format, fallback: @fallback_filter)
-        io.close
+        io.puts for_pager(fable)
+      ensure
+        io&.close
+      end
+
+      def for_pager(fable)
+        render(fable).for_pager(output_format, fallback: fallback_filter)
+      end
+
+      def output_format
+        case options[:format]
+        when 'plain' then Formats::Plain
+        when 'raw'   then Formats::Raw
+        else              Formats::Term
+        end
+      end
+
+      def fallback_filter
+        options[:trace] ? nil : Formats::Raw
       end
 
       def list(fables)
-        fables.each { |fable| puts render(fable).for_list }
+        width = title_width(fables)
+
+        fables.each do |fable|
+          puts render(fable).for_list(options[:headers], title_width: width)
+        end
+      end
+
+      def title_width(fables)
+        if options[:columns]
+          -fables.map { |f| render(f).best_title.size }.compact.max
+        else
+          ''
+        end
       end
 
       def render(fable)

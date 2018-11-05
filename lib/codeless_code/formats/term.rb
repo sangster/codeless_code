@@ -19,11 +19,11 @@ require 'nokogiri'
 
 module CodelessCode
   module Formats
+    # Renders the {Fable} using ANSI control characters for bold, italics,
+    # colors, etc.
     class Term < Base
       def call
-        raw.split("\n\n")
-           .map { |str| from_wiki(to_xhtml(regex(str))) }
-           .join("\n\n")
+        from_wiki(to_xhtml(regex(raw)))
       end
 
       def regex(str)

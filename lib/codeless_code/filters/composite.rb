@@ -17,6 +17,8 @@ require 'forwardable'
 
 module CodelessCode
   module Filters
+    # A filter that containers a collection of other filters. It will only
+    # match a {Fable} if it's matched by each contained filter.
     class Composite
       extend Forwardable
       include Enumerable

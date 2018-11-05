@@ -14,14 +14,17 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
+  # The entire collection of fables available to the application from a given
+  # data directory.
   class Catalog
-    # extend Forwardable
     include Enumerable
 
+    # @param root_dir [Pathname] A directory that contains {Fable} files
     def initialize(root_dir)
       @root_dir = root_dir
     end
 
+    # @return [Enumerable<Symbol>] the codes of all available languages
     def languages
       @languages ||= @root_dir.glob('*-*')
                               .select(&:directory?)
@@ -31,6 +34,7 @@ module CodelessCode
                               .sort
     end
 
+    # @param lang [Symbol]
     # @return [LanguageSet]
     def fetch(lang)
       if languages.include?(lang)

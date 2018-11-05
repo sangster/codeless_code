@@ -39,8 +39,8 @@ module CodelessCode
   end
 
   module Renderers
-    autoload  :Fable,  'codeless_code/renderers/fable'
-    autoload  :Page,   'codeless_code/renderers/page'
+    autoload  :Fable,     'codeless_code/renderers/fable'
+    autoload  :TermPage,  'codeless_code/renderers/term_page'
   end
 
   VERSION = Pathname.new(__dir__).join('..', 'VERSION').read.strip.freeze
@@ -68,8 +68,12 @@ module CodelessCode
 
     o.separator ''
     o.separator 'Options'
-    o.string '-o', '--output', 'write to the given file. "-" for STDOUT'
+    o.boolean '-c', '--columns', 'when listing fables, format the output ' \
+                                 'into columns'
+    o.array '-e', '--headers', 'headers to include in the list output. ' \
+                               'may be repeated'
     o.string '-f', '--format', 'one of: raw, plain, or term (default)'
+    o.string '-o', '--output', 'write to the given file. "-" for STDOUT'
     o.string '-p', '--path', 'path to directory of fables. ' \
                              'see github.com/aldesantis/the-codeless-code'
     o.boolean '--random', 'select one fable, randomly, from the filtered list'

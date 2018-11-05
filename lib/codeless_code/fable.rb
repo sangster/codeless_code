@@ -17,28 +17,30 @@ require 'forwardable'
 require 'date'
 
 module CodelessCode
+  # Model/Adapter for a "Codeless Code" fable stored in a text file.
   class Fable
     extend Forwardable
 
     HEADER_PATTERN = /([^:\s]+)\s*:\s*(.+)\s*$/.freeze
 
-    attr_accessor :file
-    attr_reader :read_headers
+    attr_reader :file, :read_headers
 
     alias_method :read_headers?, :read_headers
     def_delegators :headers, :[], :fetch, :key?
 
     def initialize(file)
-      self.file = file
+      @file = file
       @read_headers = false
       @body_pos = nil
     end
 
+    # @return [String] the actual story, including MediaWiki markup
     def body
       @body ||= read_body.freeze
     end
     alias_method :to_s, :body
 
+    # @return [Hash<String, String>] the story's metadata
     def headers
       @headers ||= begin
                      @read_headers = true
@@ -50,10 +52,12 @@ module CodelessCode
       headers.key?(key)
     end
 
+    # @return [::Date, nil]
     def date
       ::Date.parse(self['Date']) if header?('Date')
     end
 
+    # @return [Symbol]
     def lang
       @lang ||= dir_parts.first.to_sym
     end

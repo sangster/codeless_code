@@ -15,11 +15,12 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Renderers
+    # Prints a {Fable} is various ways.
     class Fable < SimpleDelegator
       HEADER_SORT = %w[Tagline Number Date].freeze
 
       def for_pager(format, fallback: nil)
-        Page.new.tap do |page|
+        TermPage.new.tap do |page|
           page.title = best_title
           page.body = render_with(format, fallback: fallback)
 
@@ -27,11 +28,22 @@ module CodelessCode
         end
       end
 
-      def for_list
-        format('%s  %s', wide_number, best_title)
+      def for_list(head_keys = [], title_width: '')
+        format("%s  %#{title_width}s    %s",
+               wide_number, best_title, render_slice(head_keys)).strip
+      end
+
+      def best_title
+        return title_with_subtitle if title&.size&.positive?
+
+        self['Name'] || self['Tagline'] || inspect
       end
 
       private
+
+      def render_slice(keys)
+        headers.slice(*keys).map {|k, v| format('%s: %p', k, v) }.join(', ')
+      end
 
       def render_with(format, fallback:)
         format.new(body).call
@@ -39,12 +51,6 @@ module CodelessCode
         raise e unless fallback
         warn format('Error parsing %s: %s', file, e.message.strip)
         fallback.new(body).call
-      end
-
-      def best_title
-        return title_with_subtitle if title&.size&.positive?
-
-        self['Name'] || self['Tagline'] || inspect
       end
 
       def title_with_subtitle

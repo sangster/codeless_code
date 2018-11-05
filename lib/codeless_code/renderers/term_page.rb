@@ -17,7 +17,9 @@ require 'colorized_string'
 
 module CodelessCode
   module Renderers
-    class Page
+    # Attempts to format the output for the +PAGER+ such that it fits within
+    # the bounds of the terminal window.
+    class TermPage
       PAGER_FORMAT = [
         '%<title>s', '%<sep1>s', '%<headers>s', '%<sep2>s', '', '%<body>s'
       ].join("\n").freeze

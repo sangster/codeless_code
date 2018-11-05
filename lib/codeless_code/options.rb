@@ -17,9 +17,13 @@ require 'forwardable'
 require 'slop'
 
 module CodelessCode
+  # Adapter class for ARGV which exposes the command-line arguments as data
+  # types.
   class Options
     extend Forwardable
     include Enumerable
+
+    MAX_ARGS = 1 # --number flag may be passed as argument +cmd 3+ vs +cmd -N 3+
 
     def_delegators :opts, :to_hash, :[]
     def_delegators :to_hash, :each, :slice
@@ -29,34 +33,40 @@ module CodelessCode
       @argv = argv
     end
 
-    def opts(suppress: false)
-      @opts ||=
-        begin
-          args = [@command_name] + @argv
-          opts = CodelessCode::OPTIONS.curry[@command_name]
+    def opts
+      @opts ||= parse_opts(suppress_errors: false)
+    end
 
-          Slop.parse(args, suppress_errors: suppress, &opts).tap do |opt|
-            if !suppress && opt.arguments.size > 2
-              raise format('too many arguments: %p', opt.arguments[1..-1])
-            end
-          end
-        end
+    def args
+      opts.arguments[1..-1]
     end
 
     def key?(key)
       !!self[key]
     end
 
+    # @return [Pathname] Where on the file system to search for fables. Will
+    #   default to {CodelessCode.DEFAULT_DATA} if unspecified
     def data_dir
       @data_dir ||= self[:path] ? Pathname.new(self[:path]) : DEFAULT_DATA
     end
 
+    # @return [String] a description of the supported command-line options
     def help
-      opts(suppress: true).to_s
+      parse_opts(suppress_errors: true).to_s
     end
 
-    def args
-      opts.arguments[1..-1]
+    private
+
+    def parse_opts(suppress_errors:)
+      args = [@command_name] + @argv
+      opts = CodelessCode::OPTIONS.curry[@command_name]
+
+      Slop.parse(args, suppress_errors: suppress_errors, &opts).tap do |o|
+        if !suppress_errors && o.arguments.size > MAX_ARGS + 1
+          raise format('too many arguments: %p', o.arguments[1..-1])
+        end
+      end
     end
   end
 end

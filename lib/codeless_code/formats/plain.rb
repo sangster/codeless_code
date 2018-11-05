@@ -17,6 +17,7 @@ require 'mediacloth'
 
 module CodelessCode
   module Formats
+    # Prints the {Fable} without any formatting, but removes the markup.
     class Plain < Base
       def call
         raw.split("\n\n")

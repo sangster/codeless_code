@@ -16,9 +16,14 @@
 require 'forwardable'
 
 module CodelessCode
+  # An {Enumerable collection} of {Fable fables} in a given language, all
+  # translated by the same person.
   class FableSet
     extend Forwardable
     include Enumerable
+
+    FILE_PATTERN = '*.txt'.freeze
+    LANG_SEP = '-'.freeze
 
     attr_accessor :dir
     def_delegator :fables, :each
@@ -46,11 +51,11 @@ module CodelessCode
     private
 
     def files
-      dir.glob('*.txt')
+      dir.glob(FILE_PATTERN)
     end
 
     def name_parts
-      dir.basename.to_s.split('-')
+      dir.basename.to_s.split(LANG_SEP)
     end
   end
 end

@@ -15,6 +15,7 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Filters
+    # Module functions to generate filter subclasses.
     module Builders
       module_function
 

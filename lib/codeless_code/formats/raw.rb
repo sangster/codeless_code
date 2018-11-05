@@ -15,6 +15,7 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Formats
+    # Prints the body of the {Fable} verbatim
     class Raw < Base
       def call
         raw

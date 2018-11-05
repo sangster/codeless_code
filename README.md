@@ -52,6 +52,18 @@ will be returned.
 codeless_code -Da 2014 -Gg 2 -nS
 ```
 
+### Listing
+
+If the given filter returns more than one fable, they will be printed as a
+list. By default, only the Number header and title of each fable will be
+printed, one per line. You may use `-e` to specify additional headers to print.
+Note that not every fable will have an entry for every header.
+
+```sh
+codeless_code -e Names,Geekiness
+codeless_code -D 2015-06 -e Date -e Topics
+```
+
 ### Current Options
 
 ```
@@ -67,8 +79,10 @@ Info
     --version
 
 Options
+    -c, --columns           when listing fables, format the output into columns
+    -e, --headers           headers to include in the list output. may be repeated
+    -f, --format            one of: raw, plain, or term (default)
     -o, --output            write to the given file. "-" for STDOUT
-    -f, --format            one of: raw, term (default)
     -p, --path              path to directory of fables. see github.com/aldesantis/the-codeless-code
     --random                select one fable, randomly, from the filtered list
     --random-set            select n fables, randomly, from the filtered list

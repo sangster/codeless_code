@@ -18,9 +18,11 @@ require 'slop'
 
 module CodelessCode
   module Filters
+    # A {Composite} filter build from the arguments supplied via the CLI.
     class FromOptions < Composite
       extend Forwardable
 
+      # @param opts [Options]
       def initialize(opts)
         @opts = opts
         @filters = nil

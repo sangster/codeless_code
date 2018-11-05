@@ -24,35 +24,27 @@ module CodelessCode
     end
 
     def call
-      io = io_open
+      user_io = io_open
 
       if options.key?(:help)
-        (io || $stdout).puts options.help
+        (user_io || $stdout).puts options.help
       elsif options.key?(:version)
-        (io || $stdout).puts version_str
+        (user_io || $stdout).puts version_str
       elsif options.key?(:list_translations)
-        Commands::ListTranslations.new(catalog, io: io).call
+        Commands::ListTranslations.new(catalog, io: user_io).call
       else
-        filter_fables(io)
+        Commands::FilterFables.new(catalog, options, io: user_io)
+                              .call(&method(:select))
       end
 
     rescue Slop::Error => e
       warn format("%s\n\n%s", e, options.help)
       exit 1
     ensure
-      io&.close
+      user_io&.close
     end
 
     private
-
-    def filter_fables(io)
-      filter = Filters::FromOptions.new(options)
-      fallback = options[:trace] ? nil : Formats::Raw
-
-      cmd = Commands::FilterFables.new(filter, output_format, io: io,
-                                       fallback_filter: fallback)
-      cmd.call(catalog, &method(:select))
-    end
 
     def options
       @options ||= Options.new(@command_name, @args)
@@ -62,17 +54,10 @@ module CodelessCode
       @catalog ||= Catalog.new(options.data_dir)
     end
 
+    # @return [IO,nil] the user's chosen output stream. +nil+ if unspecified
     def io_open
       if (path = options[:output])
         path == '-' ? $stdout.dup : File.open(path, 'w')
-      end
-    end
-
-    def output_format
-      case options[:format]
-      when 'plain' then Formats::Plain
-      when 'raw'   then Formats::Raw
-      else              Formats::Term
       end
     end
 
@@ -80,6 +65,8 @@ module CodelessCode
       select_rand(fables)
     end
 
+    # @return [Enumerable<Fable>] a random subset of the given collection, as
+    #   specified by {#options}
     def select_rand(fables)
       if options[:daily]
         fables.sample(1, random: Random.new(Date.today.strftime('%Y%m%d').to_i))

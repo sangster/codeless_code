@@ -16,11 +16,15 @@
 require 'forwardable'
 
 module CodelessCode
+  # An {Enumerable collection} of {FableSet fable sets} in a given language, but
+  # possibly translated by the different people.
   class LanguageSet
     extend Forwardable
     include Enumerable
 
     NotFoundError = Class.new(StandardError)
+
+    LANG_PATTERN = '%s-*'.freeze
 
     attr_accessor :lang, :root_dir
     def_delegator :fable_sets, :each
@@ -35,7 +39,7 @@ module CodelessCode
     end
 
     def dirs
-      root_dir.glob(format('%s-*', lang)).select(&:directory?)
+      root_dir.glob(format(LANG_PATTERN, lang)).select(&:directory?)
     end
   end
 end
