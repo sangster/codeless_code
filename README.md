@@ -152,7 +152,19 @@ Tagline Filters
     -nI, --no-tagline        no tagline listed
 ```
 
-## Contributing to codeless_code
+## Development
+
+### Testing
+
+```sh
+bundle exec rake test
+COVERAGE=surewhynot bundle exec rake test
+
+bundle exec guard
+COVERAGE=1 bundle exec guard
+```
+
+### Contributing to codeless_code
 
   * Check out the latest master to make sure the feature hasn't been
     implemented or the bug hasn't been fixed yet.

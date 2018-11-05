@@ -38,6 +38,8 @@ module CodelessCode
       dirs.map { |dir| FableSet.new(dir) }
     end
 
+    private
+
     def dirs
       root_dir.glob(format(LANG_PATTERN, lang)).select(&:directory?)
     end

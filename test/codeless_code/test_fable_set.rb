@@ -17,21 +17,34 @@ require 'helper'
 
 class TestFableSet < UnitTest
   def test_lang
+    assert_kind_of Symbol, set.lang
+
     assert_equal :en, set('en-*').lang
     assert_equal :zh, set('zh-*').lang
   end
 
   def test_translator
+    assert_kind_of String, set.translator
+
     assert_equal 'qi',     set('*-qi').translator
     assert_equal 'hanzik', set('*-hanzik').translator
   end
 
-  def test_files
-    assert_kind_of Enumerable, set.files
+  def test_fables
+    assert_kind_of Enumerable, set.fables
 
-    set.files.each do |entry|
-      flunk format('%p is not a file', entry) unless entry.file?
-    end
+    set.fables.each { |fable| assert_kind_of Fable, fable }
+  end
+
+  def test_filter
+    all_filter = ->(fable) { true }
+    none_filter = ->(fable) { false }
+
+    assert_kind_of Enumerable, set.filter(all_filter)
+    set.filter(all_filter).each { |fable| assert_kind_of Fable, fable }
+
+    assert_equal set.fables.size, set.filter(all_filter).size
+    assert_equal 0, set.filter(none_filter).size
   end
 
   private

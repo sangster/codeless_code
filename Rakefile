@@ -60,6 +60,7 @@ Rake::TestTask.new(:test) do |test|
   test.pattern = 'test/**/test_*.rb'
   test.verbose = true
 end
+Rake::Task[:build].prerequisites << :test
 
 desc "Code coverage detail"
 task :simplecov do

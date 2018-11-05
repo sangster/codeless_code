@@ -38,7 +38,7 @@ module CodelessCode
     # @return [LanguageSet]
     def fetch(lang)
       if languages.include?(lang)
-        LanguageSet.new(lang)
+        LanguageSet.new(lang, root_dir: @root_dir)
       else
         raise LanguageSet::NotFoundError,
               format("No fables for language %p", lang)

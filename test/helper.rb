@@ -23,12 +23,13 @@ end
 
 SimpleCov.configure do
   clean_filters
-  load_adapter 'test_frameworks'
+  load_profile 'test_frameworks'
 end
 
 ENV['COVERAGE'] && SimpleCov.start do
-  add_filter '/.rvm/'
+  add_filter %r{/\..*/}
 end
+
 require 'rubygems'
 require 'bundler'
 begin
@@ -45,7 +46,6 @@ require 'minitest/autorun'
 
 Minitest::Reporters.use!(Minitest::Reporters::SpecReporter.new)
 
-$LOAD_PATH.unshift(__dir__)
 $LOAD_PATH.unshift(File.join(__dir__, '..', 'lib'))
 require 'pry-byebug'
 require 'codeless_code'

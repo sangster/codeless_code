@@ -31,6 +31,6 @@ group :development do
   gem 'rake', '~> 12.3'
   gem 'rdoc', '~> 6.0'
   gem 'reek', '~> 5.2'
-  gem 'simplecov', '~> 0.16'
+  gem 'simplecov', '~> 0.16', require: false
   gem 'yard', '~> 0.9'
 end

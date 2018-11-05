@@ -56,8 +56,8 @@ class TestFable < UnitTest
     assert_kind_of Enumerable, fable.names
   end
 
-  def test_names
-    assert_kind_of Enumerable, fable.names
+  def test_topics
+    assert_kind_of Enumerable, fable.topics
   end
 
   private
