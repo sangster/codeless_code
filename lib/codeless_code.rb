@@ -24,6 +24,7 @@ module CodelessCode
   autoload  :LanguageSet,  'codeless_code/language_set'
   autoload  :Options,      'codeless_code/options'
 
+  # The "main" methods this applications supports
   module Commands
     autoload  :FilterFables,      'codeless_code/commands/filter_fables'
     autoload  :ListTranslations,  'codeless_code/commands/list_translations'
@@ -32,10 +33,14 @@ module CodelessCode
   module Formats
     autoload  :Base,            'codeless_code/formats/base'
     autoload  :Plain,           'codeless_code/formats/plain'
-    autoload  :PlainGenerator,  'codeless_code/formats/plain_generator'
     autoload  :Raw,             'codeless_code/formats/raw'
     autoload  :Term,            'codeless_code/formats/term'
-    autoload  :TermGenerator,   'codeless_code/formats/term_generator'
+
+    module Parsers
+      autoload  :Base,  'codeless_code/formats/parsers/base'
+      autoload  :Plain,  'codeless_code/formats/parsers/plain'
+      autoload  :Term,   'codeless_code/formats/parsers/term'
+    end
   end
 
   module Renderers

@@ -38,7 +38,7 @@ module CodelessCode
       end
 
       def from_wiki(str)
-        super(str, PlainGenerator.new(self))
+        super(str, Parsers::Plain.new(self))
       end
     end
   end

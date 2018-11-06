@@ -38,7 +38,7 @@ module CodelessCode
       end
 
       def from_wiki(str)
-        super(str, TermGenerator.new(self))
+        super(str, Parsers::Term.new(self))
       end
 
       def c(str)

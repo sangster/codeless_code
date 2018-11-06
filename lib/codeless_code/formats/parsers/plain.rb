@@ -14,27 +14,30 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 require 'mediacloth'
-require 'nokogiri'
 
 module CodelessCode
   module Formats
-    class Base
-      attr_accessor :raw
+    module Parsers
+      class Plain < Base
+          protected
 
-      def initialize(raw)
-        @raw = raw
-      end
+          def parse_section(ast)
+            parse_wiki_ast(ast).strip
+          end
 
-      protected
+          def parse_internal_link(ast)
+            text = parse_wiki_ast(ast)
+            text.size > 0 ? text : ast.locator
+          end
 
-      def to_xhtml(str)
-        # MediaCloth expects XHTML-ish pages and chokes on ommited end tags
-        Nokogiri::HTML(str).css('body > *').to_xhtml
-      end
-
-      def from_wiki(str, parser)
-        return "" if str.length == 0
-        MediaCloth::wiki_to_html(str, generator: parser)
+          def parse_element(ast)
+            str = parse_wiki_ast(ast)
+            if ast.name == 'pre'
+              @ctx.generate(str.gsub(/\A\n*(.*?)\n*\z/m, '\1'))
+            else
+              str
+            end
+          end
       end
     end
   end
