@@ -42,9 +42,11 @@ module Renderers
 
     def test_for_pager_fallback_format
       renderer = Renderers::Fable.new(create_fable('<p>body</p>'))
-      page = renderer.for_pager(failure_format, fallback: Formats::Raw)
 
-      assert_equal '<p>body</p>', page.body
+      assert_output(nil, /Error parsing.*format error!/) do
+        page = renderer.for_pager(failure_format, fallback: Formats::Raw)
+        assert_equal '<p>body</p>', page.body
+      end
     end
 
     def test_for_list

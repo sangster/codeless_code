@@ -49,8 +49,15 @@ class TestFableSet < UnitTest
 
   private
 
-  def set(dirname = 'en-qi')
-    (@set ||= {})[dirname] ||= FableSet.new(DEFAULT_DATA.glob(dirname).first)
+  def set(dirname = 'en-qi', root: fake_fs)
+    (@set ||= {})[dirname] ||= FableSet.new(root.glob(dirname).first)
+  end
+
+  def fake_fs
+    FakeDir.new('/').tap do |fs|
+      fs.create_path('en-qi/case-123.txt')
+      fs.create_path('zh-hanzik/case-123.txt')
+    end
   end
 end
 

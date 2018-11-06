@@ -59,8 +59,14 @@ class TestCatalog < UnitTest
 
   private
 
-  def catalog(dir = DEFAULT_DATA)
+  def catalog(dir = fake_fs)
     (@catalog ||= {})[dir] ||= Catalog.new(dir)
+  end
+
+  def fake_fs
+    FakeDir.new('/').tap do |fs|
+      fs.create_path('en-test/case-123.txt')
+    end
   end
 end
 

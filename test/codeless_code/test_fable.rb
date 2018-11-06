@@ -28,7 +28,7 @@ class TestFable < UnitTest
     assert_kind_of Hash, fable.headers
     refute_empty fable.headers.keys
 
-    %w[Date Title Number Geekiness Topics].each do |key|
+    %w[Date Title Number].each do |key|
       assert_includes fable.headers.keys, key
     end
   end
@@ -45,11 +45,11 @@ class TestFable < UnitTest
   end
 
   def test_lang
-    assert_equal :en, fable('en-qi').lang
+    assert_equal :en, fable('en-test').lang
   end
 
   def test_translator
-    assert_equal 'qi', fable('en-qi').translator
+    assert_equal 'test', fable('en-test').translator
   end
 
   def test_names
@@ -62,9 +62,23 @@ class TestFable < UnitTest
 
   private
 
-  def fable(dir = 'en-qi', fable = 'case-1.txt')
+  def fable(dir = 'en-test', fable = 'case-123.txt', root: fake_fs)
     (@fable ||= {})["#{dir}/#{fable}"] ||=
-      Fable.new(DEFAULT_DATA.glob(dir).first.glob(fable).first)
+      Fable.new(root.glob(dir).first.glob(fable).first)
+  end
+
+  def fake_fs
+    FakeDir.new('/').tap do |fs|
+      fs.create_path('en-test/case-123.txt').open do |io|
+        io.write(<<-EOF)
+          Title: Test Case
+          Number: 123
+          Date: 2018-12-23
+
+          body
+        EOF
+      end
+    end
   end
 end
 

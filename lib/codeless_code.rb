@@ -45,7 +45,7 @@ module CodelessCode
 
   VERSION = Pathname.new(__dir__).join('..', 'VERSION').read.strip.freeze
   DEFAULT_DATA = Pathname.new(__dir__)
-                     .join('..', 'data', 'the-codeless-code').freeze
+                         .join('..', 'data', 'the-codeless-code').freeze
 
   BANNERS = [
     '%<cmd>s [INFO]',

@@ -30,8 +30,14 @@ class TestLanguageSet < UnitTest
 
   private
 
-  def set(lang = :en)
-    (@set ||= {})[lang] ||= LanguageSet.new(lang, root_dir: DEFAULT_DATA)
+  def set(lang = :en, root: fake_fs)
+    (@set ||= {})[lang] ||= LanguageSet.new(lang, root_dir: root)
+  end
+
+  def fake_fs
+    FakeDir.new('/').tap do |fs|
+      fs.create_path('en-qi/case-123.txt')
+      fs.create_path('zh-hanzik/case-123.txt')
+    end
   end
 end
-

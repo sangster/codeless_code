@@ -52,10 +52,6 @@ class TestOptions < UnitTest
     assert_equal Pathname.new('/foo'), options('-p', '/foo').data_dir
   end
 
-  def test_data_dir_default
-    assert_equal DEFAULT_DATA, options.data_dir
-  end
-
   private
 
   def options(*args)

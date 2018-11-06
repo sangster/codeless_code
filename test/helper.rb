@@ -46,12 +46,18 @@ require 'minitest/autorun'
 
 Minitest::Reporters.use!(Minitest::Reporters::DefaultReporter.new)
 
+$LOAD_PATH.unshift(File.join(__dir__))
 $LOAD_PATH.unshift(File.join(__dir__, '..', 'lib'))
 require 'pry-byebug'
 require 'codeless_code'
+require 'support/fs'
+
+# Don't allow real data for tests
+CodelessCode.send(:remove_const, :DEFAULT_DATA)
 
 class UnitTest < MiniTest::Test
   include CodelessCode
+  include Support
 
   def mock_fable(content, dir: 'en-test', file: 'test-123.txt')
     Fable.new(
