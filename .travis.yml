@@ -1,11 +1,28 @@
 ---
+# codeless_code filters and prints fables from http://thecodelesscode.com
+# Copyright (C) 2018  Jon Sangster
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 language: ruby
 
 before_script:
     - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
     - ./cc-test-reporter before-build
+env:
+    - COVERAGE=1
 script:
     - bundle exec rake
 after_script:
-    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+    - ./cc-test-reporter after-build -t simplecov --exit-code $TRAVIS_TEST_RESULT
