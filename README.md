@@ -1,8 +1,9 @@
 # codeless_code
 
+[![Gem Version](https://badge.fury.io/rb/codeless_code.svg)](https://badge.fury.io/rb/codeless_code)
 [![Build Status](https://travis-ci.org/sangster/codeless_code.svg?branch=master)](https://travis-ci.org/sangster/codeless_code)
 [![Maintainability](https://api.codeclimate.com/v1/badges/0b67f813b9c48e639888/maintainability)](https://codeclimate.com/github/sangster/codeless_code/maintainability)
-[![Gem Version](https://badge.fury.io/rb/codeless_code.svg)](https://badge.fury.io/rb/codeless_code)
+<a href="https://codeclimate.com/github/sangster/codeless_code/test_coverage"><img src="https://api.codeclimate.com/v1/badges/0b67f813b9c48e639888/test_coverage" /></a>
 [![GitHub license](https://img.shields.io/github/license/sangster/codeless_code.svg)](https://github.com/sangster/codeless_code/blob/master/LICENSE)
 
 Search and print [The Codeless Code](http://thecodelesscode.com/contents)
