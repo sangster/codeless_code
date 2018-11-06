@@ -25,6 +25,7 @@ module CodelessCode
       ].join("\n").freeze
 
       attr_accessor :title, :body
+      attr_reader :headers
 
       def initialize(max_width: nil)
         @max_width = max_width || term_width
@@ -46,8 +47,8 @@ module CodelessCode
       private
 
       def term_width
-        if (w = %x[tput cols].strip&.to_i)&.positive?
-          w
+        if (tput_width = %x[tput cols].strip&.to_i)&.positive?
+          tput_width
         end
       rescue Errno::ENOENT
         nil
@@ -58,7 +59,7 @@ module CodelessCode
       end
 
       def header_section
-        lines = @headers.map { |k, v| format_header(k, v, wrap: true) }
+        lines = headers.map { |k, v| format_header(k, v, wrap: true) }
         max_line_width = lines.join("\n").lines.map { |s| s.size }.max
         padding = [0, (width - max_line_width)].max / 2
 
@@ -88,7 +89,7 @@ module CodelessCode
           body.lines.map do |s|
             ColorizedString[s].uncolorize.strip.size
           end.max || 0,
-          @headers.map(&method(:format_header)).map(&:size).max || 0
+          headers.map(&method(:format_header)).map(&:size).max || 0
         ].max
       end
     end

@@ -60,19 +60,19 @@ module Filters
     end
 
     def assert_filter(key = 'Test', **opts)
-      fab = Fable.new(test_io)
+      fab = create_fable
       filt = filter(key, **opts)
       assert filt.call(fab), format('Expected %p to match %p', opts, fab)
     end
 
     def refute_filter(key = 'Test', **opts)
-      fab = Fable.new(test_io)
+      fab = create_fable
       filt = filter(key, **opts)
       refute filt.call(fab), format('Expected %p not to match %p', opts, fab)
     end
 
-    def test_io
-      mock_filter(<<-BODY.strip)
+    def create_fable
+      mock_fable(<<-BODY.strip)
         Test: 100
 
         body

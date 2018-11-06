@@ -44,7 +44,7 @@ require 'minitest/reporters'
 require 'minitest/test'
 require 'minitest/autorun'
 
-Minitest::Reporters.use!(Minitest::Reporters::SpecReporter.new)
+Minitest::Reporters.use!(Minitest::Reporters::DefaultReporter.new)
 
 $LOAD_PATH.unshift(File.join(__dir__, '..', 'lib'))
 require 'pry-byebug'
@@ -53,9 +53,16 @@ require 'codeless_code'
 class UnitTest < MiniTest::Test
   include CodelessCode
 
-  def mock_filter(content)
-    StringIO.new(content.strip).tap do
-      |io| io.define_singleton_method(:open) { self }
-    end
+  def mock_fable(content, dir: 'en-test', file: 'test-123.txt')
+    Fable.new(
+      StringIO.new(content.strip).tap do |io|
+        io.define_singleton_method(:open) { self }
+        io.define_singleton_method(:close) { self }
+        io.define_singleton_method(:parent) do
+          Pathname.new('/test').join(dir, file)
+        end
+        io.rewind
+      end
+    )
   end
 end
