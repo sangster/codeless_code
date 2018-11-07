@@ -30,9 +30,10 @@ module CodelessCode
       attr_accessor :title, :body
       attr_reader :headers
 
-      def initialize(max_width: nil)
+      # :reek:ControlParameter
+      def initialize(max_width: nil, width_func: nil)
         @max_width = max_width
-        @max_width ||= TermWidth.new.call
+        @max_width ||= (width_func || TermWidth.new).call
 
         @headers = {}
         @key_width = 0
@@ -57,7 +58,7 @@ module CodelessCode
 
       def header_section
         lines = format_header_section
-        max_line_width = lines.join("\n").lines.map(&:size).max
+        max_line_width = lines.join("\n").lines.map(&:size).max || 0
         padding = [0, (width - max_line_width)].max / 2
 
         lines.map { |line| [' ' * padding, line].join }.join("\n")
