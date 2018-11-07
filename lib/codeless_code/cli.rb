@@ -37,15 +37,19 @@ module CodelessCode
 
     def call_io(user_io)
       if options.key?(:help)
-        (user_io || $stdout).puts options.help
+        io_puts(user_io, options.help)
       elsif options.key?(:version)
-        (user_io || $stdout).puts version_str
+        io_puts(user_io, version_str)
       elsif options.key?(:list_translations)
         Commands::ListTranslations.new(catalog, io: user_io).call
       else
         Commands::FilterFables.new(catalog, options, io: user_io)
                               .call(&method(:select))
       end
+    end
+
+    def io_puts(io, *args)
+      (io || $stdout).puts(*args)
     end
 
     def options

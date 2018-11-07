@@ -15,34 +15,12 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Filters
-    class HeaderString
+    class HeaderString < HeaderBase
       def initialize(key, exact: nil, start_with: nil, end_with: nil,
                           exclude: false)
-        @key = key
-        @tests ||= [
-          [exact,      :==],
-          [start_with, :start_with?],
-          [end_with,   :end_with?],
-        ].select(&:first).freeze
-        @exclude = exclude
-      end
-
-      def enabled?
-        @tests.any? || @exclude
-      end
-
-      def call(fable)
-        if fable.header?(@key)
-          @tests.any? ? test(fable[@key]) : !@exclude
-        else
-          @exclude
-        end
-      end
-
-      private
-
-      def test(val)
-        @tests.any? { |(test, op)| val.send(op, test) }
+        super(key, exclude, [exact,      :==],
+                            [start_with, :start_with?],
+                            [end_with,   :end_with?])
       end
     end
   end

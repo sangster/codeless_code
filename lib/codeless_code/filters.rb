@@ -19,9 +19,10 @@ module CodelessCode
     autoload  :Composite,      'codeless_code/filters/composite'
     autoload  :Date,           'codeless_code/filters/date'
     autoload  :FromOptions,    'codeless_code/filters/from_options'
+    autoload  :HeaderBase,     'codeless_code/filters/header_base'
     autoload  :HeaderInteger,  'codeless_code/filters/header_integer'
-    autoload  :Lang,           'codeless_code/filters/lang'
     autoload  :HeaderString,   'codeless_code/filters/header_string'
+    autoload  :Lang,           'codeless_code/filters/lang'
     autoload  :Translator,     'codeless_code/filters/translator'
 
     extend Builders

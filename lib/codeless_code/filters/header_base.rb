@@ -15,17 +15,35 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Filters
-    class HeaderInteger < HeaderBase
-      def initialize(key, exact: nil, min: nil, max: nil, exclude: false)
-        super(key, exclude, [exact, :==],
-                            [min,   :>=],
-                            [max,   :<=])
+    class HeaderBase
+      def initialize(key, exclude, *tests)
+        @key = key
+        @exclude = exclude
+        @tests ||= tests.select(&:first).freeze
+      end
+
+      def enabled?
+        @tests.any? || @exclude
+      end
+
+      def call(fable)
+        if fable.header?(@key)
+          @tests.any? ? test(parse(fable[@key])) : !@exclude
+        else
+          @exclude
+        end
       end
 
       protected
 
       def parse(val)
-        val.to_i
+        val
+      end
+
+      private
+
+      def test(val)
+        @tests.any? { |(test, op)| val.send(op, test) }
       end
     end
   end
