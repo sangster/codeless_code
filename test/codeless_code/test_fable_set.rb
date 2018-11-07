@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -37,11 +39,15 @@ class TestFableSet < UnitTest
   end
 
   def test_filter
-    all_filter = ->(fable) { true }
-    none_filter = ->(fable) { false }
+    all_filter = ->(_fable) { true }
 
     assert_kind_of Enumerable, set.filter(all_filter)
     set.filter(all_filter).each { |fable| assert_kind_of Fable, fable }
+  end
+
+  def test_filter_expected_side
+    all_filter = ->(_fable) { true }
+    none_filter = ->(_fable) { false }
 
     assert_equal set.fables.size, set.filter(all_filter).size
     assert_equal 0, set.filter(none_filter).size
@@ -60,4 +66,3 @@ class TestFableSet < UnitTest
     end
   end
 end
-

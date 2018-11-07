@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -15,7 +17,6 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 require 'colorized_string'
 require 'mediacloth'
-require 'nokogiri'
 
 module CodelessCode
   module Formats
@@ -23,26 +24,26 @@ module CodelessCode
     # colors, etc.
     class Term < Base
       def call
-        from_wiki(to_xhtml(regex(raw)))
+        from_wiki
       end
 
-      def regex(str)
+      protected
+
+      def from_wiki
+        super(XhtmlDoc.parse(regex_raw), :Term)
+      end
+
+      private
+
+      def regex_raw
         [
-          [/\/\/\w*$/, ''],
-          [/^\|   .*/, c('\\0').green],
-          [/<i>([^<]+)<\/i>/mi, "''\\1''"],
-          [/<b>([^<]+)<\/b>/mi, "'''\\1'''"],
-          [/<a[^>]+>([^<]+)<\/a>/mi, '[[\1]]'],
-          [/\/(\w+)\//, "''\\1''"],
-        ].inject(str) { |str, args| str = str.gsub(*args) }
-      end
-
-      def from_wiki(str)
-        super(str, Parsers::Term.new(self))
-      end
-
-      def c(str)
-        ColorizedString.new(str)
+          [%r{//\w*$}, ''],
+          [/^\|   .*/, ColorizedString.new('\\0').green],
+          [%r{<i>([^<]+)</i>}mi, "''\\1''"],
+          [%r{<b>([^<]+)</b>}mi, "'''\\1'''"],
+          [%r{<a[^>]+>([^<]+)</a>}mi, '[[\1]]'],
+          [%r{/(\w+)/}, "''\\1''"]
+        ].inject(raw) { |str, args| str.gsub(*args) }
       end
     end
   end

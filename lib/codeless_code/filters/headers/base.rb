@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -16,6 +18,8 @@
 module CodelessCode
   module Filters
     module Headers
+      # Abstract base class for all generic filters that test a {Fable fable's}
+      # headers.
       class Base
         def initialize(key, exclude, *tests)
           @key = key

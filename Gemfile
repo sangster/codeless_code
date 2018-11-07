@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -24,6 +26,8 @@ group :development do
   gem 'bundler', '~> 1.17'
   gem 'guard', '~> 2.14'
   gem 'guard-minitest', '~> 2.4'
+  gem 'guard-reek', '~> 1.2'
+  gem 'guard-rubocop', '~> 1.3'
   gem 'jeweler', '~> 2.0'
   gem 'minitest', '~> 5.11'
   gem 'minitest-reporters', '~> 1.3'
@@ -31,6 +35,7 @@ group :development do
   gem 'rake', '~> 12.3'
   gem 'rdoc', '~> 6.0'
   gem 'reek', '~> 5.2'
+  gem 'rubocop', '~> 0.60'
   gem 'simplecov', '~> 0.16', require: false
   gem 'yard', '~> 0.9'
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # vim:ft=ruby:
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
@@ -18,4 +20,14 @@ guard :minitest do
   watch(%r{^test/(.*)\/?test_(.*)\.rb$})
   watch(%r{^lib/(.*/)?([^/]+)\.rb$})     { |m| "test/#{m[1]}test_#{m[2]}.rb" }
   watch(%r{^test/helper\.rb$})           { 'test' }
+end
+
+guard :reek do
+  watch(%r{/lib/.+\.rb$})
+  watch('.reek')
+end
+
+guard :rubocop do
+  watch(/.+\.rb$/)
+  watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
 end

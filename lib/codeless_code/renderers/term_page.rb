@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -28,7 +30,9 @@ module CodelessCode
       attr_reader :headers
 
       def initialize(max_width: nil)
-        @max_width = max_width || term_width
+        @max_width = max_width
+        @max_width ||= TermWidth.new.call
+
         @headers = {}
         @key_width = 0
       end
@@ -46,38 +50,31 @@ module CodelessCode
 
       private
 
-      def term_width
-        if (tput_width = %x[tput cols].strip&.to_i)&.positive?
-          tput_width
-        end
-      rescue Errno::ENOENT
-        nil
-      end
-
-      def seperator(ch = '=')
-        (@seperator ||= {})[ch] ||= ch * width
+      def seperator(char = '=')
+        (@seperator ||= {})[char] ||= char * width
       end
 
       def header_section
-        lines = headers.map { |k, v| format_header(k, v, wrap: true) }
-        max_line_width = lines.join("\n").lines.map { |s| s.size }.max
+        lines = format_header_section
+        max_line_width = lines.join("\n").lines.map(&:size).max
         padding = [0, (width - max_line_width)].max / 2
 
-        lines.map { |s| [' ' * padding, s].join }.join("\n")
+        lines.map { |line| [' ' * padding, line].join }.join("\n")
       end
 
-      def format_header(k, v, wrap: false)
-        line =
-          if wrap
-            v.chars
-             .each_slice(width - @key_width - 2)
-             .map { |s| s.join.strip }
-             .inject { |str, s| str << "\n" << ' ' * (@key_width + 2) << s }
-          else
-            v
-          end
+      def format_header_section
+        headers.map { |key, value| format_header(key, wrap_header(value)) }
+      end
 
-        format("% #{@key_width}s: %s", k, line)
+      def format_header(key, value)
+        format("% #{@key_width}s: %s", key, value)
+      end
+
+      def wrap_header(head)
+        head.chars
+            .each_slice(width - @key_width - 2)
+            .map { |str| str.join.strip }
+            .inject { |str, part| str + "\n" + ' ' * (@key_width + 2) + part }
       end
 
       def width
@@ -86,11 +83,26 @@ module CodelessCode
 
       def content_width
         [
-          body.lines.map do |s|
-            ColorizedString[s].uncolorize.strip.size
+          body.lines.map do |line|
+            ColorizedString[line].uncolorize.strip.size
           end.max || 0,
           headers.map(&method(:format_header)).map(&:size).max || 0
         ].max
+      end
+    end
+
+    # Ask an external application how wide our terminal is
+    class TermWidth
+      def initialize(cmd = 'tputs cols')
+        @cmd = cmd
+      end
+
+      def call
+        if (tput_width = `#{@cmd}`.strip.to_i).positive?
+          tput_width
+        end
+      rescue Errno::ENOENT
+        nil
       end
     end
   end

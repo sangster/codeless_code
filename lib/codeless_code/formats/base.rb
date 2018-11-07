@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -18,6 +20,7 @@ require 'nokogiri'
 
 module CodelessCode
   module Formats
+    # Abstract base class for all formats.
     class Base
       attr_accessor :raw
 
@@ -27,14 +30,24 @@ module CodelessCode
 
       protected
 
-      def to_xhtml(str)
-        # MediaCloth expects XHTML-ish pages and chokes on ommited end tags
-        Nokogiri::HTML(str).css('body > *').to_xhtml
+      def from_wiki(str, parser_name)
+        return '' if str.empty?
+
+        parser = Parsers.const_get(parser_name).new(self)
+        MediaCloth.wiki_to_html(str, generator: parser)
+      end
+    end
+
+    # MediaCloth expects XHTML-ish pages and chokes on ommited end tags
+    class XhtmlDoc < Nokogiri::HTML::Document
+      def self.parse(thing, url = nil, encoding = nil,
+                     options = Nokogiri::XML::ParseOptions::DEFAULT_HTML,
+                     &block)
+        new(thing, url, encoding, options, &block)
       end
 
-      def from_wiki(str, parser)
-        return "" if str.length == 0
-        MediaCloth::wiki_to_html(str, generator: parser)
+      def to_s
+        css('body > *').to_xhtml
       end
     end
   end

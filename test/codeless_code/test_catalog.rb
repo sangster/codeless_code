@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -47,11 +49,15 @@ class TestCatalog < UnitTest
   end
 
   def test_select
-    all_filter = ->(fable) { true }
-    none_filter = ->(fable) { false }
+    all_filter = ->(_fable) { true }
 
     assert_kind_of Enumerable, catalog.select(all_filter)
     catalog.select(all_filter).each { |fable| assert_kind_of Fable, fable }
+  end
+
+  def test_select_expected_size
+    all_filter = ->(_fable) { true }
+    none_filter = ->(_fable) { false }
 
     assert_equal catalog.fables.size, catalog.select(all_filter).size
     assert_equal 0, catalog.select(none_filter).size
@@ -69,4 +75,3 @@ class TestCatalog < UnitTest
     end
   end
 end
-

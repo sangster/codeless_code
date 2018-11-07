@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -16,6 +18,8 @@
 module CodelessCode
   module Filters
     module Headers
+      # Matches {Fable fables} that have an integer header equal to, less than,
+      # or greater than the given parameters.
       class Integer < Base
         def initialize(key, exact: nil, min: nil, max: nil, exclude: false)
           super(key, exclude, [exact, :==],

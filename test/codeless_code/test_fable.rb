@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -70,15 +72,14 @@ class TestFable < UnitTest
   def fake_fs
     FakeDir.new('/').tap do |fs|
       fs.create_path('en-test/case-123.txt').open do |io|
-        io.write(<<-EOF)
+        io.write(<<-FABLE)
           Title: Test Case
           Number: 123
           Date: 2018-12-23
 
           body
-        EOF
+        FABLE
       end
     end
   end
 end
-

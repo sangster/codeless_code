@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -35,6 +37,12 @@ module Renderers
 
       assert_equal renderer.title, page.title
       assert_equal 'body', page.body
+    end
+
+    def test_for_pager_headers
+      renderer = Renderers::Fable.new(create_fable('body'))
+      page = renderer.for_pager(Formats::Raw)
+
       assert_equal %w[Number Date Geekiness Names Topics Test],
                    page.headers.keys
       refute_includes page.headers.keys, 'Title'
@@ -54,7 +62,7 @@ module Renderers
       assert_equal '00123  Test Title', renderer.for_list
     end
 
-    def test_for_list
+    def test_for_list_with_headers
       renderer = Renderers::Fable.new(create_fable)
       assert_equal '00123  Test Title    Number: "123", Date: "2018-12-23"',
                    renderer.for_list(%w[Number Date])
@@ -68,7 +76,7 @@ module Renderers
     private
 
     def create_fable(body = 'body', **args)
-      mock_fable(<<-BODY.strip, **args)
+      mock_fable(<<-FABLE.strip, **args)
         Number: 123
         Title: Test Title
         Date: 2018-12-23
@@ -78,7 +86,7 @@ module Renderers
         Test: some text
 
         #{body}
-      BODY
+      FABLE
     end
 
     def failure_format

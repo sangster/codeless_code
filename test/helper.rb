@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -15,9 +17,11 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 require 'simplecov'
 
-module SimpleCov::Configuration
-  def clean_filters
-    @filters = []
+module SimpleCov
+  module Configuration
+    def clean_filters
+      @filters = []
+    end
   end
 end
 
@@ -35,8 +39,8 @@ require 'bundler'
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts 'Run `bundle install` to install missing gems'
+  warn e.message
+  warn 'Run `bundle install` to install missing gems'
   exit e.status_code
 end
 

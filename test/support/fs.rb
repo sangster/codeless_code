@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Support
   class FakeFile
     attr_reader :name, :path, :body, :parent
@@ -76,8 +78,8 @@ module Support
       dirs, base = Pathname.new(path).split
 
       dirs.to_s.split(File::SEPARATOR)
-               .inject(self) { |dir, name| dir.create(name, type: :dir) }
-               .create(base.to_s)
+          .inject(self) { |dir, name| dir.create(name, type: :dir) }
+          .create(base.to_s)
     end
 
     def create(node_name, type: :file)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -21,24 +23,31 @@ module CodelessCode
     class Plain < Base
       def call
         raw.split("\n\n")
-           .map { |str| from_wiki(to_xhtml(regex(str))) }
+           .map { |str| from_wiki(CleanupBody.new(str)) }
            .join("\n\n")
       end
 
-      private
-
-      def regex(str)
-        [
-          [/\/\/\w*$/, ''],
-          [/<i>([^<]+)<\/i>/mi, '\1'],
-          [/<b>([^<]+)<\/b>/mi, '\1'],
-          [/<a[^>]+>([^<]+)<\/a>/mi, '\1'],
-          [/\/(\w+)\//, '\1'],
-        ].inject(str) { |str, args| str = str.gsub(*args) }
-      end
+      protected
 
       def from_wiki(str)
-        super(str, Parsers::Plain.new(self))
+        super(XhtmlDoc.parse(str.to_s), :Plain)
+      end
+    end
+
+    # Tidies up the mixed syntax found in fables
+    class CleanupBody
+      def initialize(body)
+        @body = body
+      end
+
+      def to_s
+        [
+          [%r{//\w*$}, ''],
+          [%r{<i>([^<]+)</i>}mi, '\1'],
+          [%r{<b>([^<]+)</b>}mi, '\1'],
+          [%r{<a[^>]+>([^<]+)</a>}mi, '\1'],
+          [%r{/(\w+)/}, '\1']
+        ].inject(@body) { |str, args| str.gsub(*args) }
       end
     end
   end

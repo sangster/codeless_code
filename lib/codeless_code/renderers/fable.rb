@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -24,7 +26,7 @@ module CodelessCode
           page.title = best_title
           page.body = render_with(format, fallback: fallback)
 
-          headers_no_best_title.map { |k, v| page.add_header(k, v) }
+          headers_no_best_title.map { |key, val| page.add_header(key, val) }
         end
       end
 
@@ -42,14 +44,17 @@ module CodelessCode
       private
 
       def render_slice(keys)
-        headers.slice(*keys).map {|k, v| format('%s: %p', k, v) }.join(', ')
+        headers.slice(*keys)
+               .map { |key, val| format('%s: %p', key, val) }
+               .join(', ')
       end
 
       def render_with(format, fallback:)
         format.new(body).call
-      rescue => e
-        raise e unless fallback
-        warn format('Error parsing %s: %s', file, e.message.strip)
+      rescue StandardError => err
+        raise err unless fallback
+
+        warn format('Error parsing %s: %s', file, err.message.strip)
         fallback.new(body).call
       end
 
@@ -58,13 +63,13 @@ module CodelessCode
       end
 
       def headers_no_best_title
-        sorted_headers.dup.delete_if { |_, v| v&.strip == title&.strip }
+        sorted_headers.dup.delete_if { |_, val| val&.strip == title&.strip }
       end
 
       def sorted_headers
         Hash[
-          headers.each_with_index.sort_by do |(k,_), i|
-            HEADER_SORT.index(k) || HEADER_SORT.size + i
+          headers.each_with_index.sort_by do |(key, _), index|
+            HEADER_SORT.index(key) || HEADER_SORT.size + index
           end.map(&:first)
         ]
       end

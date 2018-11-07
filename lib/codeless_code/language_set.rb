@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -24,7 +26,7 @@ module CodelessCode
 
     NotFoundError = Class.new(StandardError)
 
-    LANG_PATTERN = '%s-*'.freeze
+    LANG_PATTERN = '%s-*'
 
     attr_accessor :lang, :root_dir
     def_delegator :fable_sets, :each

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -58,4 +60,3 @@ class TestOptions < UnitTest
     (@options ||= {})[args] ||= Options.new('codeless_code', args)
   end
 end
-

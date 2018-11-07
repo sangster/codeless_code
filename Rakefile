@@ -1,4 +1,5 @@
-# encoding: utf-8
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -21,8 +22,8 @@ require 'bundler'
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
+  warn e.message
+  warn 'Run `bundle install` to install missing gems'
   exit e.status_code
 end
 
@@ -37,9 +38,9 @@ require 'yard'
 require 'codeless_code'
 
 Jeweler::Tasks.new do |gem|
-  gem.name = "codeless_code"
-  gem.homepage = "https://github.com/sangster/codeless_code"
-  gem.license = "GPL-3.0"
+  gem.name = 'codeless_code'
+  gem.homepage = 'https://github.com/sangster/codeless_code'
+  gem.license = 'GPL-3.0'
   gem.summary = 'Search and print The Codeless Code fables'
   gem.description = <<-DESC.gsub(/\s+/m, ' ').strip
     http://thecodelesscode.com contains many humorous and interesting fables
@@ -48,8 +49,8 @@ Jeweler::Tasks.new do |gem|
 
     This tool provides a CLI to filter through these fables and view them.
   DESC
-  gem.email = "jon@ertt.ca"
-  gem.authors = ["Jon Sangster"]
+  gem.email = 'jon@ertt.ca'
+  gem.authors = ['Jon Sangster']
   gem.files.include('data/**/*.txt')
   # dependencies defined in Gemfile
 end
@@ -62,9 +63,9 @@ Rake::TestTask.new(:test) do |test|
 end
 Rake::Task[:build].prerequisites << :test
 
-desc "Code coverage detail"
+desc 'Code coverage detail'
 task :simplecov do
-  ENV['COVERAGE'] = "true"
+  ENV['COVERAGE'] = 'true'
   Rake::Task['test'].execute
 end
 
@@ -96,4 +97,18 @@ namespace :readme do
   end
 end
 
-task default: :test
+namespace :lint do
+  require 'reek/rake/task'
+  require 'rubocop/rake_task'
+
+  Reek::Rake::Task.new do |t|
+    t.fail_on_error = false
+  end
+
+  RuboCop::RakeTask.new
+end
+
+desc 'Run all linters'
+task lint: ['lint:rubocop', 'lint:reek']
+
+task default: %i[test lint]

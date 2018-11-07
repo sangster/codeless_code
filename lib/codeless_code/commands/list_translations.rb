@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -15,6 +17,7 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Commands
+    # List all the translations available in the given {Catalog}.
     class ListTranslations
       # @param io [IO] if given, the output will be written to this stream,
       #   otherwise STDOUT will be used

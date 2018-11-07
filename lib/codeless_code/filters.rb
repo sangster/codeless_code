@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -14,6 +16,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
+  # Functors which test whether a given {Fable} matches some criteria.
   module Filters
     autoload  :Builders,     'codeless_code/filters/builders'
     autoload  :Composite,    'codeless_code/filters/composite'
@@ -22,6 +25,7 @@ module CodelessCode
     autoload  :Lang,         'codeless_code/filters/lang'
     autoload  :Translator,   'codeless_code/filters/translator'
 
+    # Filters which inspect a {Fable fable's} headers
     module Headers
       autoload  :Base,     'codeless_code/filters/headers/base'
       autoload  :Integer,  'codeless_code/filters/headers/integer'

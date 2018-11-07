@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -41,7 +43,7 @@ module CodelessCode
         LanguageSet.new(lang, root_dir: @root_dir)
       else
         raise LanguageSet::NotFoundError,
-              format("No fables for language %p", lang)
+              format('No fables for language %p', lang)
       end
     end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -17,6 +19,8 @@ require 'date'
 
 module CodelessCode
   module Filters
+    # Matches {Fable fables} that were published on, before, or after a given
+    # date.
     class Date
       def initialize(exact: nil, min: nil, max: nil, exclude: false)
         @tests ||= [
@@ -42,14 +46,18 @@ module CodelessCode
       private
 
       def test(val)
-        @tests.any? { |(test, op)| val.send(op, test) }
+        @tests.any? { |(test, operator)| val.send(operator, test) }
       end
 
+      # Wraps a {::Date} and matches it against "date substrings". ie:
+      # +2010-12+ will matches any dates in December, 2010 and +2010+ will
+      # match any dates in that year.
       class Matcher
         # param str [String] A date like +2010+, +2010-12+, or +2010-12-23+
         def self.parse(str)
-          match = :day
+          return nil unless str
 
+          match = :day
           if str.size == 4
             str = "#{str}-01-01"
             match = :year
@@ -67,27 +75,35 @@ module CodelessCode
         end
 
         def ==(other)
-          cmp(@date, other, :==, @match)
+          compare(@date, other, :==, @match)
         end
 
         def >=(other)
-          cmp(@date, other, :>=, @match)
+          compare(@date, other, :>=, @match)
         end
 
         def <=(other)
-          cmp(@date, other, :<=, @match)
+          compare(@date, other, :<=, @match)
         end
 
         private
 
-        def cmp(a, b, op, match)
+        def compare(first, second, operator, match)
           case match
           when :year
-            a.year.send(op, b.year)
+            first.year.send(operator, second.year)
           when :month
-            a.year == b.year ? a.month.send(op, b.month) : cmp(a, b, op, :year)
+            compare_month(first, second, operator)
           else
-            a.send(op, b)
+            first.send(operator, second)
+          end
+        end
+
+        def compare_month(first, second, operator)
+          if first.year == second.year
+            first.month.send(operator, second.month)
+          else
+            compare(first, second, operator, :year)
           end
         end
       end

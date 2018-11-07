@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -17,8 +19,10 @@ require 'date'
 require 'slop'
 
 module CodelessCode
+  # Parse command-line parameters and dispatch them to the user's chosen
+  # "command."
   class Cli
-    def initialize(command_name = $0, args = ARGV)
+    def initialize(command_name = $PROGRAM_NAME, args = ARGV)
       @command_name = command_name
       @args = args
     end
@@ -41,10 +45,9 @@ module CodelessCode
       elsif options.key?(:version)
         io_puts(user_io, version_str)
       elsif options.key?(:list_translations)
-        Commands::ListTranslations.new(catalog, io: user_io).call
+        list_translations(user_io)
       else
-        Commands::FilterFables.new(catalog, options, io: user_io)
-                              .call(&method(:select))
+        filter_fables(user_io)
       end
     end
 
@@ -56,15 +59,25 @@ module CodelessCode
       @options ||= Options.new(@command_name, @args)
     end
 
+    def list_translations(user_io)
+      Commands::ListTranslations.new(catalog, io: user_io).call
+    end
+
+    def filter_fables(user_io)
+      Commands::FilterFables.new(catalog, options, io: user_io)
+                            .call(&method(:select))
+    end
+
     def catalog
       @catalog ||= Catalog.new(options.data_dir)
     end
 
     # @return [IO,nil] the user's chosen output stream. +nil+ if unspecified
     def io_open
-      if (path = options[:output])
-        path == '-' ? $stdout.dup : File.open(path, 'w')
-      end
+      path = options[:output]
+      return if path.nil?
+
+      path == '-' ? $stdout.dup : File.open(path, 'w')
     end
 
     def select(fables)
@@ -75,7 +88,7 @@ module CodelessCode
     #   specified by {#options}
     def select_rand(fables)
       if options[:daily]
-        fables.sample(1, random: Random.new(Date.today.strftime('%Y%m%d').to_i))
+        fables.sample(1, random: date_random_generator)
       elsif (count = options[:random_set])
         assert_num!(count)
         fables.sample(count&.to_i)
@@ -86,10 +99,14 @@ module CodelessCode
       end
     end
 
+    def date_random_generator
+      Random.new(Date.today.strftime('%Y%m%d').to_i)
+    end
+
     def assert_num!(num)
-      if num&.to_i&.to_s != num
-        raise ArgumentError, format('not a number %p', num)
-      end
+      return unless num&.to_i&.to_s != num
+
+      raise ArgumentError, format('not a number %p', num)
     end
 
     def version_str
@@ -102,7 +119,7 @@ module CodelessCode
         'Copyright (C) %<date>d  Jon Sangster',
         'License GPL-3.0: GNU General Public License v3.0 <%<url>s>',
         'This is free software: you are free to change and redistribute it.',
-        'There is NO WARRANTY, to the extent permitted by law.',
+        'There is NO WARRANTY, to the extent permitted by law.'
       ].join("\n")
 
       format(template, date: ::Date.today.year,

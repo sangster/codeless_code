@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 # vim: ft=ruby:
 
 require 'pathname'
@@ -7,4 +9,4 @@ require 'pry-byebug' if ENV.key?('DEBUG')
 $LOAD_PATH << Pathname.new(__dir__).join('..', 'lib')
 require 'codeless_code'
 
-CodelessCode::Cli.new(File.basename($0), ARGV).call
+CodelessCode::Cli.new(File.basename($PROGRAM_NAME), ARGV).call

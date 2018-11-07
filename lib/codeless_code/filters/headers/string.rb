@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -16,9 +18,11 @@
 module CodelessCode
   module Filters
     module Headers
+      # Matches {Fable fables} that have an string header equal to, that starts
+      # with, or ends with the given parameters.
       class String < Base
         def initialize(key, exact: nil, start_with: nil, end_with: nil,
-                            exclude: false)
+                       exclude: false)
           super(key, exclude, [exact,      :==],
                               [start_with, :start_with?],
                               [end_with,   :end_with?])

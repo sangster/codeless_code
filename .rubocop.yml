@@ -1,0 +1,17 @@
+AllCops:
+  Exclude:
+    - codeless_code.gemspec
+
+Metrics/BlockLength:
+  Exclude:
+    - lib/codeless_code.rb
+
+Metrics/ModuleLength:
+  Exclude:
+    - lib/codeless_code.rb
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/FormatStringToken:
+  Enabled: false

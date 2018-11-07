@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -29,11 +31,8 @@ module CodelessCode
         @io = io
       end
 
-      def call
-        filter = Filters::FromOptions.new(options)
-        fables = @catalog.select(filter)
-        fables = yield fables if block_given?
-        fables = sort(fables)
+      def call(&blk)
+        fables = filters_from_options(blk)
 
         case fables.size
         when 0
@@ -46,6 +45,13 @@ module CodelessCode
       end
 
       private
+
+      def filters_from_options
+        filter = Filters::FromOptions.new(options)
+        fables = @catalog.select(filter)
+        fables = yield fables if block_given?
+        sort(fables)
+      end
 
       def sort(fables)
         if options.key?(:sort)
@@ -64,9 +70,7 @@ module CodelessCode
       end
 
       def pager(cmd, fable)
-        io = open format('|%s', cmd), 'w'
-        pid = io.pid
-
+        io = IO.open(format('|%s', cmd), 'w')
         io.puts for_pager(fable)
       ensure
         io&.close

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -22,8 +24,8 @@ module CodelessCode
     extend Forwardable
     include Enumerable
 
-    FILE_PATTERN = '*.txt'.freeze
-    LANG_SEP = '-'.freeze
+    FILE_PATTERN = '*.txt'
+    LANG_SEP = '-'
 
     attr_accessor :dir
     def_delegator :fables, :each

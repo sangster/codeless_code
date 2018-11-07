@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -23,14 +25,14 @@ module CodelessCode
 
     HEADER_PATTERN = /([^:\s]+)\s*:\s*(.+)\s*$/.freeze
 
-    attr_reader :file, :read_headers
+    attr_reader :file, :has_read_headers
 
-    alias_method :read_headers?, :read_headers
+    alias read_headers? has_read_headers
     def_delegators :headers, :[], :fetch, :key?
 
     def initialize(file)
       @file = file
-      @read_headers = false
+      @has_read_headers = false
       @body_pos = nil
     end
 
@@ -38,12 +40,12 @@ module CodelessCode
     def body
       @body ||= read_body.freeze
     end
-    alias_method :to_s, :body
+    alias to_s body
 
     # @return [Hash<String, String>] the story's metadata
     def headers
       @headers ||= begin
-                     @read_headers = true
+                     @has_read_headers = true
                      read_headers.freeze
                    end
     end
@@ -118,6 +120,7 @@ module CodelessCode
         @body_pos = io.pos
         match = HEADER_PATTERN.match(io.gets)
         break if match.nil?
+
         head[match[1].strip] = match[2]&.strip
       end
       massage_headers(head)

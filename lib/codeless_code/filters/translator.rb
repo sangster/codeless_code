@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -15,6 +17,7 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Filters
+    # Matches {Fable fables} translated by the person with the given name.
     class Translator
       def initialize(exact: nil, casecmp: nil)
         @exact = exact
@@ -26,8 +29,10 @@ module CodelessCode
       end
 
       def call(fable)
-        return false unless @exact.nil? || @exact == fable.translator
-        @casecmp.nil? || @casecmp.casecmp?(fable.translator)
+        trans = fable.translator
+        return false unless @exact.nil? || @exact == trans
+
+        @casecmp.nil? || @casecmp.casecmp?(trans)
       end
     end
   end

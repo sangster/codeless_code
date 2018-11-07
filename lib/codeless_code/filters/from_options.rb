@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # codeless_code filters and prints fables from http://thecodelesscode.com
 # Copyright (C) 2018  Jon Sangster
 #
@@ -37,28 +39,55 @@ module CodelessCode
       end
 
       def filters
-        @filters ||= [
-          Filters::Lang.new(exact: lang),
-
-          Filters::Translator.new(exact: @opts[:translator_exact],
-                                  casecmp: @opts[:translator]),
-
-          Filters::Credits.new(**str_args(:credits)),
-          Filters::Name.new(**str_args(:name)),
-          Filters::Series.new(**str_args(:series)),
-          Filters::Tagline.new(**str_args(:tagline)),
-          Filters::Title.new(**str_args(:title)),
-
-          Filters::Geekiness.new(**int_args(:geekiness)),
-          Filters::Number.new(**int_args(:number).tap do |n|
-            n[:exact] ||= @opts.args.last&.to_i
-          end),
-
-          Filters::Date.new(**date_args),
-        ]
+        @filters ||=
+          string_filters +
+          integer_filters +
+          [
+            date_filter,
+            lang_filter,
+            number_filter,
+            translator_filter
+          ]
       end
 
       private
+
+      def string_filters
+        %i[Credits Name Tagline Title Series].map { |name| filter(name, :str) }
+      end
+
+      def integer_filters
+        %i[Geekiness].map { |name| filter(name, :int) }
+      end
+
+      def date_filter
+        filter(:date, :date)
+      end
+
+      def lang_filter
+        new_filter(:Lang, exact: lang)
+      end
+
+      def number_filter
+        filter(:Number, :int) do |filter|
+          filter[:exact] ||= @opts.args.last&.to_i
+        end
+      end
+
+      def translator_filter
+        new_filter(:Translator, exact: @opts[:translator_exact],
+                                casecmp: @opts[:translator])
+      end
+
+      def filter(type, name, &blk)
+        new_filter(name, **send(:"#{type}_args", name.to_s.downcase.to_s), &blk)
+      end
+
+      def new_filter(name, **args)
+        Filters.const_get(name).new(**args).tap do |filter|
+          yield filter if block_given?
+        end
+      end
 
       def fallback_lang
         lang = ENV['LANG']&.split(/_|\./)&.first&.downcase&.to_sym
@@ -66,13 +95,14 @@ module CodelessCode
       end
 
       def non_defaults_enabled?
-        filters.reject { |f| f.is_a?(Filters::Lang) }.any?(&:enabled?)
+        filters.reject { |filter| filter.is_a?(Filters::Lang) }.any?(&:enabled?)
       end
 
       def str_args(name)
         Hash[
           %i[exact start_with end_with exclude].zip(
-            @opts.slice(*%I[#{name} #{name}_start #{name}_end no_#{name}]).values
+            @opts.slice(:"#{name}", :"#{name}_start", :"#{name}_end",
+                        :"no_#{name}").values
           )
         ].tap do |args|
           args[:start_with] ||= '' if @opts[:"has_#{name}"]
@@ -82,7 +112,7 @@ module CodelessCode
       def int_args(name)
         Hash[
           %i[exact min max exclude].zip(
-            @opts.slice(*%I[#{name} #{name}_gte #{name}_lte])
+            @opts.slice(:"#{name}", :"#{name}_gte", :"#{name}_lte")
                  .values
                  .map { |num| num&.to_i }
                  .push(@opts[:"no_#{name}"])
@@ -92,15 +122,11 @@ module CodelessCode
 
       def date_args
         {
-          exact: date(@opts[:date]),
-          min: date(@opts[:date_gte]),
-          max: date(@opts[:date_lte]),
-          exclude: @opts[:no_date],
+          exact: Filters::Date::Matcher.parse(@opts[:date]),
+          min: Filters::Date::Matcher.parse(@opts[:date_gte]),
+          max: Filters::Date::Matcher.parse(@opts[:date_lte]),
+          exclude: @opts[:no_date]
         }
-      end
-
-      def date(arg)
-        arg && Filters::Date::Matcher.parse(arg)
       end
     end
   end
