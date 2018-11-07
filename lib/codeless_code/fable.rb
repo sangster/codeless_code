@@ -108,21 +108,19 @@ module CodelessCode
 
     def read_headers
       io = file.open
-
-      {}.tap do |head|
-        until io.eof?
-          @body_pos = io.pos
-          if (m = HEADER_PATTERN.match(io.gets))
-            head[m[1].strip] = m[2]&.strip
-          else
-            break
-          end
-        end
-
-        massage_headers(head)
-      end
+      parse_headers(io)
     ensure
       io&.close
+    end
+
+    def parse_headers(io, head = {})
+      until io.eof?
+        @body_pos = io.pos
+        match = HEADER_PATTERN.match(io.gets)
+        break if match.nil?
+        head[match[1].strip] = match[2]&.strip
+      end
+      massage_headers(head)
     end
 
     def massage_headers(head)
@@ -130,6 +128,7 @@ module CodelessCode
         head['Series'] = head['Title']
         head['Title'] = head.delete('Subtitle')
       end
+      head
     end
 
     def list(key)

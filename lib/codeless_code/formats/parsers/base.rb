@@ -51,12 +51,7 @@ module CodelessCode
 
           #Reimplement this
           def parse_list(ast)
-            ast.children.map do |c|
-              r = parse_list_item(c) if c.class == ListItemAST
-              r = parse_list_term(c) if c.class == ListTermAST
-              r = parse_list_definition(c) if c.class == ListDefinitionAST
-              r
-            end
+            ast.children.map(&method(:parse_list_child))
           end
 
           #Reimplement this
@@ -97,14 +92,14 @@ module CodelessCode
           #Reimplement this
           def parse_resource_link(ast)
             ast.children.map do |c|
-              parse_internal_link_item(c) if c.class == InternalLinkItemAST
+              parse_internal_link_item(c) if c.is_a?(InternalLinkItemAST)
             end
           end
 
           #Reimplement this
           def parse_category_link(ast)
             ast.children.map do |c|
-              parse_internal_link_item(c) if c.class == InternalLinkItemAST
+              parse_internal_link_item(c) if c.is_a?(InternalLinkItemAST)
             end
           end
 
@@ -146,6 +141,16 @@ module CodelessCode
           #Reimplement this
           def parse_keyword(ast)
             parse_wiki_ast(ast)
+          end
+
+          private
+
+          def parse_list_child(c)
+            case c
+            when ListItemAST       then parse_list_item(c)
+            when ListTermAST       then parse_list_term(c)
+            when ListDefinitionAST then parse_list_definition(c)
+            end
           end
       end
     end

@@ -18,25 +18,30 @@ module CodelessCode
     class HeaderInteger
       def initialize(key, exact: nil, min: nil, max: nil, exclude: false)
         @key = key
-        @exact = exact
-        @min = min
-        @max = max
+        @tests ||= [
+          [exact, :==],
+          [min,   :>=],
+          [max,   :<=]
+        ].select(&:first).freeze
         @exclude = exclude
       end
 
       def enabled?
-        @exact || @min || @max || @exclude
+        @tests.any? || @exclude
       end
 
       def call(fable)
-        if fable.header?(@key) && (val = fable[@key]&.to_i)
-          return false unless @exact.nil? || val == @exact
-          return false unless @min.nil? || val >= @min.to_i
-          return false unless @max.nil? || val <= @max.to_i
-          !@exclude
+        if fable.header?(@key)
+          @tests.any? ? test(fable[@key].to_i) : !@exclude
         else
           @exclude
         end
+      end
+
+      private
+
+      def test(val)
+        @tests.any? { |(test, op)| val.send(op, test) }
       end
     end
   end

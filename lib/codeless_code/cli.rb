@@ -25,7 +25,17 @@ module CodelessCode
 
     def call
       user_io = io_open
+      call_io(user_io)
+    rescue Slop::Error => e
+      warn format("%s\n\n%s", e, options.help)
+      exit 1
+    ensure
+      user_io&.close
+    end
 
+    private
+
+    def call_io(user_io)
       if options.key?(:help)
         (user_io || $stdout).puts options.help
       elsif options.key?(:version)
@@ -36,15 +46,7 @@ module CodelessCode
         Commands::FilterFables.new(catalog, options, io: user_io)
                               .call(&method(:select))
       end
-
-    rescue Slop::Error => e
-      warn format("%s\n\n%s", e, options.help)
-      exit 1
-    ensure
-      user_io&.close
     end
-
-    private
 
     def options
       @options ||= Options.new(@command_name, @args)
@@ -71,14 +73,18 @@ module CodelessCode
       if options[:daily]
         fables.sample(1, random: Random.new(Date.today.strftime('%Y%m%d').to_i))
       elsif (count = options[:random_set])
-        if count&.to_i&.to_s != count
-          raise ArgumentError, format('not a number %p', count)
-        end
+        assert_num!(count)
         fables.sample(count&.to_i)
       elsif options[:random]
         fables.sample(1)
       else
         fables
+      end
+    end
+
+    def assert_num!(num)
+      if num&.to_i&.to_s != num
+        raise ArgumentError, format('not a number %p', num)
       end
     end
 

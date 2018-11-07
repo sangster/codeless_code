@@ -19,25 +19,30 @@ module CodelessCode
   module Filters
     class Date
       def initialize(exact: nil, min: nil, max: nil, exclude: false)
-        @exact = exact
-        @min = min
-        @max = max
+        @tests ||= [
+          [exact, :==],
+          [min,   :>=],
+          [max,   :<=]
+        ].select(&:first).freeze
         @exclude = exclude
       end
 
       def enabled?
-        @exact || @min || @max || @exclude
+        @tests.any? || @exclude
       end
 
       def call(fable)
         if (val = fable.date)
-          return false unless @exact.nil? || @exact == val
-          return false unless @min.nil? || @min <= val
-          return false unless @max.nil? || @max >= val
-          true
+          @tests.any? ? test(val) : !@exclude
         else
           @exclude
         end
+      end
+
+      private
+
+      def test(val)
+        @tests.any? { |(test, op)| val.send(op, test) }
       end
 
       class Matcher
