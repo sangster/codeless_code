@@ -15,15 +15,18 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Filters
-    autoload  :Builders,       'codeless_code/filters/builders'
-    autoload  :Composite,      'codeless_code/filters/composite'
-    autoload  :Date,           'codeless_code/filters/date'
-    autoload  :FromOptions,    'codeless_code/filters/from_options'
-    autoload  :HeaderBase,     'codeless_code/filters/header_base'
-    autoload  :HeaderInteger,  'codeless_code/filters/header_integer'
-    autoload  :HeaderString,   'codeless_code/filters/header_string'
-    autoload  :Lang,           'codeless_code/filters/lang'
-    autoload  :Translator,     'codeless_code/filters/translator'
+    autoload  :Builders,     'codeless_code/filters/builders'
+    autoload  :Composite,    'codeless_code/filters/composite'
+    autoload  :Date,         'codeless_code/filters/date'
+    autoload  :FromOptions,  'codeless_code/filters/from_options'
+    autoload  :Lang,         'codeless_code/filters/lang'
+    autoload  :Translator,   'codeless_code/filters/translator'
+
+    module Headers
+      autoload  :Base,     'codeless_code/filters/headers/base'
+      autoload  :Integer,  'codeless_code/filters/headers/integer'
+      autoload  :String,   'codeless_code/filters/headers/string'
+    end
 
     extend Builders
 

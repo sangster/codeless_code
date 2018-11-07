@@ -19,13 +19,13 @@ module Filters
   class TestBuilders < UnitTest
     def test_header_integer_filter
       assert_kind_of Class, Filters::Builders.header_integer_filter('FooOne')
-      assert_kind_of Filters::HeaderInteger,
+      assert_kind_of Filters::Headers::Integer,
                      Filters::Builders.header_integer_filter('FooTwo').new
     end
 
     def test_header_string_filter
       assert_kind_of Class, Filters::Builders.header_string_filter('BarOne')
-      assert_kind_of Filters::HeaderString,
+      assert_kind_of Filters::Headers::String,
                      Filters::Builders.header_string_filter('BarTwo').new
     end
   end

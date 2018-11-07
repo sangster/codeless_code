@@ -20,11 +20,11 @@ module CodelessCode
       module_function
 
       def header_integer_filter(name)
-        subclass_filter(HeaderInteger, name)
+        subclass_filter(Headers::Integer, name)
       end
 
       def header_string_filter(name)
-        subclass_filter(HeaderString, name)
+        subclass_filter(Headers::String, name)
       end
 
       def subclass_filter(klass, name)

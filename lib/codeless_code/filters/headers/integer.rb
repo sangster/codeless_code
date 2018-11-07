@@ -15,17 +15,19 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Filters
-    class HeaderInteger < HeaderBase
-      def initialize(key, exact: nil, min: nil, max: nil, exclude: false)
-        super(key, exclude, [exact, :==],
-                            [min,   :>=],
-                            [max,   :<=])
-      end
+    module Headers
+      class Integer < Base
+        def initialize(key, exact: nil, min: nil, max: nil, exclude: false)
+          super(key, exclude, [exact, :==],
+                              [min,   :>=],
+                              [max,   :<=])
+        end
 
-      protected
+        protected
 
-      def parse(val)
-        val.to_i
+        def parse(val)
+          val.to_i
+        end
       end
     end
   end

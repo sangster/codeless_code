@@ -15,35 +15,37 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Filters
-    class HeaderBase
-      def initialize(key, exclude, *tests)
-        @key = key
-        @exclude = exclude
-        @tests ||= tests.select(&:first).freeze
-      end
-
-      def enabled?
-        @tests.any? || @exclude
-      end
-
-      def call(fable)
-        if fable.header?(@key)
-          @tests.any? ? test(parse(fable[@key])) : !@exclude
-        else
-          @exclude
+    module Headers
+      class Base
+        def initialize(key, exclude, *tests)
+          @key = key
+          @exclude = exclude
+          @tests ||= tests.select(&:first).freeze
         end
-      end
 
-      protected
+        def enabled?
+          @tests.any? || @exclude
+        end
 
-      def parse(val)
-        val
-      end
+        def call(fable)
+          if fable.header?(@key)
+            @tests.any? ? test(parse(fable[@key])) : !@exclude
+          else
+            @exclude
+          end
+        end
 
-      private
+        protected
 
-      def test(val)
-        @tests.any? { |(test, op)| val.send(op, test) }
+        def parse(val)
+          val
+        end
+
+        private
+
+        def test(val)
+          @tests.any? { |(test, op)| val.send(op, test) }
+        end
       end
     end
   end

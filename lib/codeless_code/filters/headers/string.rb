@@ -15,12 +15,14 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Filters
-    class HeaderString < HeaderBase
-      def initialize(key, exact: nil, start_with: nil, end_with: nil,
-                          exclude: false)
-        super(key, exclude, [exact,      :==],
-                            [start_with, :start_with?],
-                            [end_with,   :end_with?])
+    module Headers
+      class String < Base
+        def initialize(key, exact: nil, start_with: nil, end_with: nil,
+                            exclude: false)
+          super(key, exclude, [exact,      :==],
+                              [start_with, :start_with?],
+                              [end_with,   :end_with?])
+        end
       end
     end
   end
