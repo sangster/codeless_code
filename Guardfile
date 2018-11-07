@@ -23,8 +23,8 @@ guard :minitest do
 end
 
 guard :reek do
-  watch(%r{/lib/.+\.rb$})
-  watch('.reek')
+  watch(%r{^lib/.+\.rb$})
+  watch('.reek.yml')
 end
 
 guard :rubocop do

@@ -21,6 +21,7 @@ module CodelessCode
       # Matches {Fable fables} that have an string header equal to, that starts
       # with, or ends with the given parameters.
       class String < Base
+        # :reek:BooleanParameter
         def initialize(key, exact: nil, start_with: nil, end_with: nil,
                        exclude: false)
           super(key, exclude, [exact,      :==],

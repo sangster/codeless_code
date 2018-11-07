@@ -50,6 +50,8 @@ module CodelessCode
           parse_keyword
         ].freeze
 
+        attr_reader :ctx
+
         def initialize(ctx)
           @ctx = ctx
         end
@@ -65,6 +67,7 @@ module CodelessCode
         end
 
         # Reimplement this
+        # :reek:UtilityFunction
         def parse_text(ast)
           ast.contents
         end
@@ -76,15 +79,15 @@ module CodelessCode
 
         # Reimplement this
         def parse_resource_link(ast)
-          ast.children.map do |c|
-            parse_internal_link_item(c) if c.is_a?(InternalLinkItemAST)
+          ast.children.map do |child|
+            parse_internal_link_item(child) if child.is_a?(InternalLinkItemAST)
           end
         end
 
         # Reimplement this
         def parse_category_link(ast)
-          ast.children.map do |c|
-            parse_internal_link_item(c) if c.is_a?(InternalLinkItemAST)
+          ast.children.map do |child|
+            parse_internal_link_item(child) if child.is_a?(InternalLinkItemAST)
           end
         end
 

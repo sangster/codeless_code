@@ -30,8 +30,8 @@ module CodelessCode
     def call
       user_io = io_open
       call_io(user_io)
-    rescue Slop::Error => e
-      warn format("%s\n\n%s", e, options.help)
+    rescue Slop::Error => err
+      warn format("%s\n\n%s", err, options.help)
       exit 1
     ensure
       user_io&.close
@@ -51,6 +51,8 @@ module CodelessCode
       end
     end
 
+    # :reek:ControlParameter
+    # :reek:UtilityFunction
     def io_puts(io, *args)
       (io || $stdout).puts(*args)
     end
@@ -65,7 +67,7 @@ module CodelessCode
 
     def filter_fables(user_io)
       Commands::FilterFables.new(catalog, options, io: user_io)
-                            .call(&method(:select))
+                            .call(&method(:select_rand))
     end
 
     def catalog
@@ -73,15 +75,12 @@ module CodelessCode
     end
 
     # @return [IO,nil] the user's chosen output stream. +nil+ if unspecified
+    # :reek:FeatureEnvy
     def io_open
       path = options[:output]
       return if path.nil?
 
       path == '-' ? $stdout.dup : File.open(path, 'w')
-    end
-
-    def select(fables)
-      select_rand(fables)
     end
 
     # @return [Enumerable<Fable>] a random subset of the given collection, as
@@ -99,14 +98,20 @@ module CodelessCode
       end
     end
 
+    # :reek:UtilityFunction
     def date_random_generator
       Random.new(Date.today.strftime('%Y%m%d').to_i)
     end
 
     def assert_num!(num)
-      return unless num&.to_i&.to_s != num
+      return unless assert_num(num)
 
       raise ArgumentError, format('not a number %p', num)
+    end
+
+    # :reek:UtilityFunction
+    def assert_num(num)
+      num&.to_i&.to_s != num
     end
 
     def version_str

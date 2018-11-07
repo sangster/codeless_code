@@ -27,11 +27,11 @@ module CodelessCode
     FILE_PATTERN = '*.txt'
     LANG_SEP = '-'
 
-    attr_accessor :dir
+    attr_reader :dir
     def_delegator :fables, :each
 
     def initialize(dir)
-      self.dir = dir
+      @dir = dir
     end
 
     def lang
@@ -43,11 +43,11 @@ module CodelessCode
     end
 
     def fables
-      @fables ||= files.map { |f| Fable.new(f) }.sort_by(&:number)
+      @fables ||= files.map { |file| Fable.new(file) }.sort_by(&:number)
     end
 
     def filter(filt)
-      select { |f| filt.call(f) }
+      select { |fable| filt.call(fable) }
     end
 
     private

@@ -27,6 +27,11 @@ module CodelessCode
         from_wiki
       end
 
+      # :reek:UtilityFunction
+      def color(str)
+        ColorizedString.new(str)
+      end
+
       protected
 
       def from_wiki

@@ -26,6 +26,7 @@ module CodelessCode
         '%<title>s', '%<sep1>s', '%<headers>s', '%<sep2>s', '', '%<body>s'
       ].join("\n").freeze
 
+      # :reek:Attribute
       attr_accessor :title, :body
       attr_reader :headers
 

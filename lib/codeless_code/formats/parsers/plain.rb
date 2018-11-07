@@ -38,7 +38,7 @@ module CodelessCode
         def parse_element(ast)
           str = parse_wiki_ast(ast)
           if ast.name == 'pre'
-            @ctx.generate(str.gsub(/\A\n*(.*?)\n*\z/m, '\1'))
+            ctx.generate(str.gsub(/\A\n*(.*?)\n*\z/m, '\1'))
           else
             str
           end

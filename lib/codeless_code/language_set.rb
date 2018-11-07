@@ -24,16 +24,17 @@ module CodelessCode
     extend Forwardable
     include Enumerable
 
+    # If the requested language set doesn't exist
     NotFoundError = Class.new(StandardError)
 
     LANG_PATTERN = '%s-*'
 
-    attr_accessor :lang, :root_dir
+    attr_reader :lang, :root_dir
     def_delegator :fable_sets, :each
 
     def initialize(lang, root_dir:)
-      self.lang = lang
-      self.root_dir = root_dir
+      @lang = lang
+      @root_dir = root_dir
     end
 
     def fable_sets

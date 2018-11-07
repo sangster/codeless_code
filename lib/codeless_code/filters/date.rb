@@ -22,6 +22,7 @@ module CodelessCode
     # Matches {Fable fables} that were published on, before, or after a given
     # date.
     class Date
+      # :reek:BooleanParameter
       def initialize(exact: nil, min: nil, max: nil, exclude: false)
         @tests ||= [
           [exact, :==],
@@ -57,16 +58,13 @@ module CodelessCode
         def self.parse(str)
           return nil unless str
 
-          match = :day
           if str.size == 4
-            str = "#{str}-01-01"
-            match = :year
+            new(::Date.parse("#{str}-01-01"), match: :year)
           elsif str.size == 7
-            str = "#{str}-01"
-            match = :month
+            new(::Date.parse("#{str}-01"), match: :month)
+          else
+            new(::Date.parse(str), match: :day)
           end
-
-          new(::Date.parse(str), match: match)
         end
 
         def initialize(date, match:)
@@ -88,6 +86,8 @@ module CodelessCode
 
         private
 
+        # :reek:ControlParameter
+        # :reek:FeatureEnvy
         def compare(first, second, operator, match)
           case match
           when :year
@@ -99,6 +99,7 @@ module CodelessCode
           end
         end
 
+        # :reek:FeatureEnvy
         def compare_month(first, second, operator)
           if first.year == second.year
             first.month.send(operator, second.month)

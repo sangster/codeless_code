@@ -25,6 +25,10 @@ module CodelessCode
 
     HEADER_PATTERN = /([^:\s]+)\s*:\s*(.+)\s*$/.freeze
 
+    RAW_ATTRS     = %w[Title Tagline Credits].freeze
+    INTEGER_ATTRS = %w[Number Geekiness].freeze
+    LIST_ATTRS    = %w[Names Topics].freeze
+
     attr_reader :file, :has_read_headers
 
     alias read_headers? has_read_headers
@@ -68,32 +72,16 @@ module CodelessCode
       @translator ||= dir_parts.last
     end
 
-    def title
-      self['Title']
+    RAW_ATTRS.each do |attr|
+      define_method(attr.downcase.to_sym) { self[attr] }
     end
 
-    def tagline
-      self['Tagline']
+    INTEGER_ATTRS.each do |attr|
+      define_method(attr.downcase.to_sym) { self[attr].to_i }
     end
 
-    def credits
-      self['Credits']
-    end
-
-    def number
-      self['Number'].to_i
-    end
-
-    def geekiness
-      self['Geekiness'].to_i
-    end
-
-    def names
-      list('Names')
-    end
-
-    def topics
-      list('Topics')
+    LIST_ATTRS.each do |attr|
+      define_method(attr.downcase.to_sym) { list(attr) }
     end
 
     private
@@ -115,6 +103,7 @@ module CodelessCode
       io&.close
     end
 
+    # :reek:FeatureEnvy
     def parse_headers(io, head = {})
       until io.eof?
         @body_pos = io.pos
@@ -126,6 +115,7 @@ module CodelessCode
       massage_headers(head)
     end
 
+    # :reek:UtilityFunction
     def massage_headers(head)
       if head.key?('Series')
         head['Series'] = head['Title']

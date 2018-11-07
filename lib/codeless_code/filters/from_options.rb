@@ -43,8 +43,8 @@ module CodelessCode
           string_filters +
           integer_filters +
           [
-            date_filter,
-            lang_filter,
+            filter(:Date, :date),
+            new_filter(:Lang, exact: lang),
             number_filter,
             translator_filter
           ]
@@ -60,18 +60,8 @@ module CodelessCode
         %i[Geekiness].map { |name| filter(name, :int) }
       end
 
-      def date_filter
-        filter(:date, :date)
-      end
-
-      def lang_filter
-        new_filter(:Lang, exact: lang)
-      end
-
       def number_filter
-        filter(:Number, :int) do |filter|
-          filter[:exact] ||= @opts.args.last&.to_i
-        end
+        filter(:Number, :int) { |args| args[:exact] ||= @opts.args.last&.to_i }
       end
 
       def translator_filter
@@ -79,14 +69,15 @@ module CodelessCode
                                 casecmp: @opts[:translator])
       end
 
-      def filter(type, name, &blk)
-        new_filter(name, **send(:"#{type}_args", name.to_s.downcase.to_s), &blk)
+      def filter(name, type, &blk)
+        new_filter(name,
+                   **send(:"#{type.downcase}_args", name.to_s.downcase.to_s),
+                   &blk)
       end
 
       def new_filter(name, **args)
-        Filters.const_get(name).new(**args).tap do |filter|
-          yield filter if block_given?
-        end
+        yield args if block_given?
+        Filters.const_get(name).new(**args)
       end
 
       def fallback_lang
@@ -120,12 +111,12 @@ module CodelessCode
         ]
       end
 
-      def date_args
+      def date_args(name)
         {
-          exact: Filters::Date::Matcher.parse(@opts[:date]),
-          min: Filters::Date::Matcher.parse(@opts[:date_gte]),
-          max: Filters::Date::Matcher.parse(@opts[:date_lte]),
-          exclude: @opts[:no_date]
+          exact: Filters::Date::Matcher.parse(@opts[:"#{name}"]),
+          min: Filters::Date::Matcher.parse(@opts[:"#{name}_gte"]),
+          max: Filters::Date::Matcher.parse(@opts[:"#{name}_lte"]),
+          exclude: @opts[:"no_#{name}"]
         }
       end
     end

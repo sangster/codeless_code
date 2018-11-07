@@ -1,6 +1,7 @@
 AllCops:
   Exclude:
     - codeless_code.gemspec
+    - vendor/**/*
 
 Metrics/BlockLength:
   Exclude:

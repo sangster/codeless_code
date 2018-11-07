@@ -22,7 +22,7 @@ module CodelessCode
   module Formats
     # Abstract base class for all formats.
     class Base
-      attr_accessor :raw
+      attr_reader :raw
 
       def initialize(raw)
         @raw = raw
@@ -30,24 +30,24 @@ module CodelessCode
 
       protected
 
-      def from_wiki(str, parser_name)
-        return '' if str.empty?
-
+      def from_wiki(doc, parser_name)
         parser = Parsers.const_get(parser_name).new(self)
-        MediaCloth.wiki_to_html(str, generator: parser)
+        MediaCloth.wiki_to_html(doc.to_s, generator: parser)
       end
     end
 
     # MediaCloth expects XHTML-ish pages and chokes on ommited end tags
-    class XhtmlDoc < Nokogiri::HTML::Document
-      def self.parse(thing, url = nil, encoding = nil,
-                     options = Nokogiri::XML::ParseOptions::DEFAULT_HTML,
-                     &block)
-        new(thing, url, encoding, options, &block)
+    class XhtmlDoc
+      def self.parse(html)
+        new(Nokogiri::HTML(html))
+      end
+
+      def initialize(doc)
+        @doc = doc
       end
 
       def to_s
-        css('body > *').to_xhtml
+        @doc.css('body > *').to_xhtml
       end
     end
   end

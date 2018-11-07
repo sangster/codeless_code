@@ -21,6 +21,7 @@ module CodelessCode
       # Matches {Fable fables} that have an integer header equal to, less than,
       # or greater than the given parameters.
       class Integer < Base
+        # :reek:BooleanParameter
         def initialize(key, exact: nil, min: nil, max: nil, exclude: false)
           super(key, exclude, [exact, :==],
                               [min,   :>=],
@@ -29,6 +30,7 @@ module CodelessCode
 
         protected
 
+        # :reek:UtilityFunction
         def parse(val)
           val.to_i
         end

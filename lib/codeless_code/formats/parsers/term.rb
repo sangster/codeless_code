@@ -28,50 +28,50 @@ module CodelessCode
 
         def parse_formatted(ast)
           if ast.formatting == :Bold
-            c(parse_wiki_ast(ast)).bold
+            color(parse_wiki_ast(ast)).bold
           else
-            c(parse_wiki_ast(ast)).italic
+            color(parse_wiki_ast(ast)).italic
           end
         end
 
         def parse_preformatted(ast)
-          c(parse_wiki_ast(ast)).green
+          color(parse_wiki_ast(ast)).green
         end
 
         def parse_section(ast)
-          c(parse_wiki_ast(ast).strip).blue
+          color(parse_wiki_ast(ast).strip).blue
         end
 
         def parse_link(ast)
-          c(parse_wiki_ast(ast)).underline
+          color(parse_wiki_ast(ast)).underline
         end
 
         def parse_internal_link(ast)
           text = parse_wiki_ast(ast)
-          c(!text.empty? ? text : ast.locator).underline
+          color(!text.empty? ? text : ast.locator).underline
         end
 
         def parse_element(ast)
           str = parse_wiki_ast(ast)
           if ast.name == 'pre'
-            c(@ctx.generate(str.gsub(/\A\n*(.*?)\n*\z/m, '\1'))).red
+            color(ctx.generate(str.gsub(/\A\n*(.*?)\n*\z/m, '\1'))).red
           else
             str
           end
         end
 
         def parse_template(ast)
-          c(ast.template_name).yellow
+          color(ast.template_name).yellow
         end
 
         def parse_keyword(ast)
-          c(parse_wiki_ast(ast)).underline
+          color(parse_wiki_ast(ast)).underline
         end
 
         private
 
-        def c(str)
-          @ctx.c(str)
+        def color(str)
+          ctx.color(str)
         end
       end
     end

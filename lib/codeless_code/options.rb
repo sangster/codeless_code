@@ -64,9 +64,9 @@ module CodelessCode
       args = [@command_name] + @argv
       opts = CodelessCode::OPTIONS.curry[@command_name]
 
-      Slop.parse(args, suppress_errors: suppress_errors, &opts).tap do |o|
-        if !suppress_errors && o.arguments.size > MAX_ARGS + 1
-          raise format('too many arguments: %p', o.arguments[1..-1])
+      Slop.parse(args, suppress_errors: suppress_errors, &opts).tap do |opt|
+        if !suppress_errors && opt.arguments.size > MAX_ARGS + 1
+          raise format('too many arguments: %p', opt.arguments[1..-1])
         end
       end
     end

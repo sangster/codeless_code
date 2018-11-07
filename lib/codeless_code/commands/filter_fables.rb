@@ -32,7 +32,7 @@ module CodelessCode
       end
 
       def call(&blk)
-        fables = filters_from_options(blk)
+        fables = filters_from_options(&blk)
 
         case fables.size
         when 0
@@ -55,7 +55,7 @@ module CodelessCode
 
       def sort(fables)
         if options.key?(:sort)
-          fables = fables.sort_by { |f| f[options[:sort]] || "\uffff" }
+          fables = fables.sort_by { |fable| fable[options[:sort]] || "\uffff" }
         end
         fables = fables.reverse if options[:reverse]
         fables
@@ -70,7 +70,7 @@ module CodelessCode
       end
 
       def pager(cmd, fable)
-        io = IO.open(format('|%s', cmd), 'w')
+        io = IO.popen(cmd, 'w')
         io.puts for_pager(fable)
       ensure
         io&.close
@@ -102,12 +102,13 @@ module CodelessCode
 
       def title_width(fables)
         if options[:columns]
-          -fables.map { |f| render(f).best_title.size }.compact.max
+          -fables.map { |fable| render(fable).best_title.size }.compact.max
         else
           ''
         end
       end
 
+      # :reek:UtilityFunction
       def render(fable)
         Renderers::Fable.new(fable)
       end
