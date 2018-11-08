@@ -63,13 +63,13 @@ class UnitTest < MiniTest::Test
   include CodelessCode
   include Support
 
-  def mock_fable(content, dir: 'en-test', file: 'test-123.txt')
+  def mock_fable(content, dir: 'en-test')
     Fable.new(
       StringIO.new(content.strip).tap do |io|
         io.define_singleton_method(:open) { self }
         io.define_singleton_method(:close) { self }
         io.define_singleton_method(:parent) do
-          Pathname.new('/test').join(dir, file)
+          Pathname.new('/test').join(dir)
         end
         io.rewind
       end

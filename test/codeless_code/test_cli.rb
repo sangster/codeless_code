@@ -16,60 +16,47 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 require 'helper'
+require 'minitest/mock'
 
-class TestFable < UnitTest
-  def test_read_headers?
-    new_fable = fable
-
-    refute_predicate new_fable, :read_headers?
-    new_fable.headers
-    assert_predicate new_fable, :read_headers?
+class TestCli < UnitTest
+  def setup
+    @pager = ENV.delete('PAGER')
   end
 
-  def test_headers
-    assert_kind_of Hash, fable.headers
-    refute_empty fable.headers.keys
-
-    %w[Date Title Number].each do |key|
-      assert_includes fable.headers.keys, key
-    end
+  def teardown
+    ENV['PAGER'] = @pager
   end
 
-  def test_body
-    new_fable = fable
-
-    assert_kind_of String, new_fable.body
-    assert_predicate new_fable, :read_headers?
+  def test_call_default
+    expected = "00123  Test Case\n00234  Test Case 2\n"
+    assert_output(expected) { cli.call }
   end
 
-  def test_date
-    assert_kind_of Date, fable.date
+  def test_call_single_by_number
+    [
+      "    Test Case     \n" \
+      "==================\n" \
+      "Number: 123\n" \
+      "  Date: 2018-12-23\n" \
+      "------------------\n" \
+      "\n" \
+      "body\n"
+    ].each { |expected| assert_output(expected) { cli('123').call } }
   end
 
-  def test_lang
-    assert_equal :en, fable('en-test').lang
-  end
-
-  def test_translator
-    assert_equal 'test', fable('en-test').translator
-  end
-
-  def test_names
-    assert_kind_of Enumerable, fable.names
-  end
-
-  def test_topics
-    assert_kind_of Enumerable, fable.topics
+  def test_help
+    assert_output(/Usage: test_app/) { cli('-h').call }
   end
 
   private
 
-  def fable(dir = 'en-test', fable = 'case-123.txt', root: fake_fs)
-    (@fable ||= {})["#{dir}/#{fable}"] ||=
-      Fable.new(root.glob(dir).first.glob(fable).first)
+  def cli(*args)
+    Cli.new('test_app', args).tap do |cli|
+      cli.send(:options).instance_variable_set(:@data_dir, fake_fs)
+    end
   end
 
-  def fake_fs
+  def fake_fs # rubocop:disable Metrics/MethodLength
     FakeDir.new('/').tap do |fs|
       fs.create_path('en-test/case-123.txt', <<-FABLE)
         Title: Test Case
@@ -77,6 +64,13 @@ class TestFable < UnitTest
         Date: 2018-12-23
 
         body
+      FABLE
+      fs.create_path('en-test/case-234.txt', <<-FABLE)
+        Title: Test Case 2
+        Number: 234
+        Date: 2018-12-30
+
+        body 2
       FABLE
     end
   end

@@ -17,34 +17,34 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 require 'helper'
 
-class TestLanguageSet < UnitTest
-  def test_lang
-    assert_equal :en, set(:en).lang
-    assert_equal :zh, set(:zh).lang
-  end
+module Filters
+  class TestLang < UnitTest
+    def test_enabled
+      refute_predicate Filters::Lang.new, :enabled?
 
-  def test_fable_sets
-    assert_kind_of Enumerable, set.fable_sets
-    refute_empty set.fable_sets
+      assert_predicate filter(exact: :en), :enabled?
+    end
 
-    set.fable_sets.each { |set| assert_kind_of FableSet, set }
-  end
+    def test_call
+      fable = create_fable(dir: 'en-test')
+      assert filter(exact: :en).call(fable),
+             'expected lang to match directory name'
+      refute filter(exact: :fr).call(fable),
+             'expected lang to not match other language'
+    end
 
-  def test_fable_sets_filtered
-    assert_equal %w[qi another], set.map(&:translator)
-  end
+    private
 
-  private
+    def filter(exact:)
+      Filters::Lang.new(exact: exact)
+    end
 
-  def set(lang = :en, root: fake_fs)
-    (@set ||= {})[lang] ||= LanguageSet.new(lang, root_dir: root)
-  end
+    def create_fable(body = 'body', **args)
+      mock_fable(<<-FABLE.strip, **args)
+        Number: 123
 
-  def fake_fs
-    FakeDir.new('/').tap do |fs|
-      fs.create_path('en-qi/case-123.txt')
-      fs.create_path('en-another/case-234.txt')
-      fs.create_path('zh-hanzik/case-123.txt')
+        #{body}
+      FABLE
     end
   end
 end

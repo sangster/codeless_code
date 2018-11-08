@@ -74,12 +74,16 @@ module Support
       [super(str), files.map { |f| f.glob(str) }].flatten.compact
     end
 
-    def create_path(path)
+    def create_path(path, body = nil)
       dirs, base = Pathname.new(path).split
 
-      dirs.to_s.split(File::SEPARATOR)
-          .inject(self) { |dir, name| dir.create(name, type: :dir) }
-          .create(base.to_s)
+      path =
+        dirs.to_s.split(File::SEPARATOR)
+            .inject(self) { |dir, name| dir.create(name, type: :dir) }
+            .create(base.to_s)
+
+      path.open { |io| io.write(body) && io.rewind } if body
+      path
     end
 
     def create(node_name, type: :file)

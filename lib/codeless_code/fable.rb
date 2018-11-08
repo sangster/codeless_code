@@ -37,7 +37,7 @@ module CodelessCode
     def initialize(file)
       @file = file
       @has_read_headers = false
-      @body_pos = nil
+      @body_pos = 0
     end
 
     # @return [String] the actual story, including MediaWiki markup

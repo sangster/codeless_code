@@ -20,7 +20,7 @@ require 'helper'
 module Renderers
   class TestFable < UnitTest
     def test_delegation
-      fable = create_fable(dir: 'en-test', file: 'case-123.txt')
+      fable = create_fable(dir: 'en-test')
       renderer = Renderers::Fable.new(fable)
 
       keys = %i[body headers date lang translator title geekiness names topics]
