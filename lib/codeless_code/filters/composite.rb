@@ -37,7 +37,7 @@ module CodelessCode
       end
 
       def call(fable)
-        select(&:enabled?).all? { |filter| filter.call(fable) }
+        any? && select(&:enabled?).all? { |filter| filter.call(fable) }
       end
     end
   end

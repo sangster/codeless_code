@@ -8,3 +8,7 @@ detectors:
     enabled: false
   LongParameterList:
     max_params: 4
+  UtilityFunction:
+    exclude:
+      - CodelessCode::Filters::Headers::Base
+      - CodelessCode::Filters::Date
