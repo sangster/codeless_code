@@ -32,6 +32,7 @@ end
 
 ENV['COVERAGE'] && SimpleCov.start do
   add_filter %r{/\..*/}
+  add_filter %r{/vendor/.*}
 end
 
 require 'rubygems'
