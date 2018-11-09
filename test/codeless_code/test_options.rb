@@ -54,10 +54,4 @@ class TestOptions < UnitTest
   def test_data
     assert_equal Pathname.new('/foo'), options('-p', '/foo').data_dir
   end
-
-  private
-
-  def options(*args)
-    (@options ||= {})[args] ||= Options.new('codeless_code', args)
-  end
 end

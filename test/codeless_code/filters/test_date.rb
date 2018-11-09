@@ -31,6 +31,8 @@ module Filters
 
     def test_call_exact
       assert_filter(exact: '2018-12-23')
+      assert_filter(exact: '2018-12')
+      assert_filter(exact: '2018')
 
       refute_filter(exact: '1999-12-23')
     end
@@ -38,6 +40,8 @@ module Filters
     def test_call_min
       assert_filter(min: '2018-12-22')
       assert_filter(min: '2018-12-23')
+      assert_filter(min: '2018-12')
+      assert_filter(min: '2018')
 
       refute_filter(min: '2018-12-24')
     end
@@ -45,6 +49,8 @@ module Filters
     def test_call_max
       assert_filter(max: '2018-12-23')
       assert_filter(max: '2018-12-24')
+      assert_filter(max: '2018-12')
+      assert_filter(max: '2018')
 
       refute_filter(max: '2018-12-22')
     end

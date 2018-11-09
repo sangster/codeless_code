@@ -75,4 +75,12 @@ class UnitTest < MiniTest::Test
       end
     )
   end
+
+  def catalog(dir = fake_fs)
+    (@catalog ||= {})[dir] ||= Catalog.new(dir)
+  end
+
+  def options(*args)
+    (@options ||= {})[args] ||= Options.new('codeless_code', args)
+  end
 end
