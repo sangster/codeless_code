@@ -100,7 +100,7 @@ module CodelessCode
 
     # :reek:UtilityFunction
     def date_random_generator
-      Random.new(Date.today.strftime('%Y%m%d').to_i)
+      Random.new(::Date.today.strftime('%Y%m%d').to_i)
     end
 
     def assert_num!(num)

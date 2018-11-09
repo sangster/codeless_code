@@ -79,11 +79,15 @@ module Support
 
       path =
         dirs.to_s.split(File::SEPARATOR)
-            .inject(self) { |dir, name| dir.create(name, type: :dir) }
+            .inject(self) { |dir, name| dir.get_or_create(name, type: :dir) }
             .create(base.to_s)
 
       path.open { |io| io.write(body) && io.rewind } if body
       path
+    end
+
+    def get_or_create(node_name, type: :file)
+      files.find { |f| f.name == node_name } || create(node_name, type: type)
     end
 
     def create(node_name, type: :file)

@@ -21,33 +21,21 @@ module CodelessCode
   module Filters
     # Matches {Fable fables} that were published on, before, or after a given
     # date.
-    class Date
+    class Date < Headers::Base
       # :reek:BooleanParameter
       def initialize(exact: nil, min: nil, max: nil, exclude: false)
-        @tests ||= [
-          [exact, :==],
-          [min,   :>=],
-          [max,   :<=]
-        ].select(&:first).freeze
-        @exclude = exclude
+        super('Date', exclude, [Matcher.parse(exact), :==],
+                               [Matcher.parse(min),   :<=],
+                               [Matcher.parse(max),   :>=])
       end
 
-      def enabled?
-        @tests.any? || @exclude
+      # :reek:UtilityFunction
+      def parse(val)
+        ::Date.parse(val)
       end
 
-      def call(fable)
-        if (val = fable.date)
-          @tests.any? ? test(val) : !@exclude
-        else
-          @exclude
-        end
-      end
-
-      private
-
-      def test(val)
-        @tests.any? { |(test, operator)| val.send(operator, test) }
+      def test_single(val, operator, test)
+        test.send(operator, val)
       end
 
       # Wraps a {::Date} and matches it against "date substrings". ie:

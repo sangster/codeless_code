@@ -23,7 +23,7 @@ module Renderers
       fable = create_fable(dir: 'en-test')
       renderer = Renderers::Fable.new(fable)
 
-      keys = %i[body headers date lang translator title geekiness names topics]
+      keys = %i[body headers lang translator title geekiness names topics]
       keys.each do |key|
         assert_equal fable.send(key), renderer.send(key)
       end

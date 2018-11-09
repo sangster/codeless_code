@@ -46,6 +46,18 @@ module CodelessCode
     end
     alias to_s body
 
+    # Read, or re-read, the body of the fable from the disk
+    # @see #body
+    def read_body
+      headers unless read_headers?
+
+      io = file.open
+      io.seek @body_pos
+      io.read.strip
+    ensure
+      io&.close
+    end
+
     # @return [Hash<String, String>] the story's metadata
     def headers
       @headers ||= begin
@@ -56,11 +68,6 @@ module CodelessCode
 
     def header?(key)
       headers.key?(key)
-    end
-
-    # @return [::Date, nil]
-    def date
-      ::Date.parse(self['Date']) if header?('Date')
     end
 
     # @return [Symbol]
@@ -85,16 +92,6 @@ module CodelessCode
     end
 
     private
-
-    def read_body
-      headers unless read_headers?
-
-      io = file.open
-      io.seek @body_pos
-      io.read.strip
-    ensure
-      io&.close
-    end
 
     def read_headers
       io = file.open

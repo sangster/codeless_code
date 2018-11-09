@@ -40,7 +40,7 @@ module CodelessCode
       end
 
       def to_s
-        format(PAGER_FORMAT, title: title.center(width),
+        format(PAGER_FORMAT, title: title.center(width).rstrip,
                              sep1: seperator('='), sep2: seperator('-'),
                              headers: header_section, body: body)
       end

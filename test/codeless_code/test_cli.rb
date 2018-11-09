@@ -34,7 +34,7 @@ class TestCli < UnitTest
 
   def test_call_single_by_number
     [
-      "    Test Case     \n" \
+      "    Test Case\n" \
       "==================\n" \
       "Number: 123\n" \
       "  Date: 2018-12-23\n" \
@@ -46,6 +46,14 @@ class TestCli < UnitTest
 
   def test_help
     assert_output(/Usage: test_app/) { cli('-h').call }
+  end
+
+  def test_version
+    assert_output(/^test_app #{VERSION}/) { cli('--version').call }
+  end
+
+  def test_list_translations
+    assert_output("en  test\n") { cli('--list-translations').call }
   end
 
   private

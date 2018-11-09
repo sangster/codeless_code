@@ -42,10 +42,6 @@ class TestFable < UnitTest
     assert_predicate new_fable, :read_headers?
   end
 
-  def test_date
-    assert_kind_of Date, fable.date
-  end
-
   def test_lang
     assert_equal :en, fable('en-test').lang
   end

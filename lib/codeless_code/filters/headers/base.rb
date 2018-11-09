@@ -41,14 +41,19 @@ module CodelessCode
 
         protected
 
+        # :reek:UtilityFunction
         def parse(val)
           val
+        end
+
+        def test_single(val, operator, test)
+          val.send(operator, test)
         end
 
         private
 
         def test(val)
-          @tests.any? { |(test, op)| val.send(op, test) }
+          @tests.any? { |(test, op)| test_single(val, op, test) }
         end
       end
     end

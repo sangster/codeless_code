@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
-guard :minitest do
+guard :minitest, all_after_pass: true do
   watch(%r{^test/(.*)\/?test_(.*)\.rb$})
   watch(%r{^lib/(.*/)?([^/]+)\.rb$})     { |m| "test/#{m[1]}test_#{m[2]}.rb" }
   watch(%r{^test/helper\.rb$})           { 'test' }

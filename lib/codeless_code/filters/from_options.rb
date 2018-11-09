@@ -113,9 +113,9 @@ module CodelessCode
 
       def date_args(name)
         {
-          exact: Filters::Date::Matcher.parse(@opts[:"#{name}"]),
-          min: Filters::Date::Matcher.parse(@opts[:"#{name}_gte"]),
-          max: Filters::Date::Matcher.parse(@opts[:"#{name}_lte"]),
+          exact: @opts[:"#{name}"],
+          min: @opts[:"#{name}_after"],
+          max: @opts[:"#{name}_before"],
           exclude: @opts[:"no_#{name}"]
         }
       end
