@@ -42,7 +42,7 @@ module CodelessCode
 
       def regex_raw
         [
-          [%r{//\w*$}, ''],
+          [%r{\s*//\w*$}, ''],
           [/^\|   .*/, ColorizedString.new('\\0').green],
           [%r{<i>([^<]+)</i>}mi, "''\\1''"],
           [%r{<b>([^<]+)</b>}mi, "'''\\1'''"],

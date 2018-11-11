@@ -1,4 +1,3 @@
-# vim:ft=ruby:
 # frozen_string_literal: true
 
 # codeless_code filters and prints fables from http://thecodelesscode.com
@@ -16,18 +15,13 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
-guard :minitest, all_after_pass: true do
-  watch(%r{^test/(.*)\/?test_(.*)\.rb$})
-  watch(%r{^lib/(.*/)?([^/]+)\.rb$})     { |m| "test/#{m[1]}test_#{m[2]}.rb" }
-  watch(%r{^test/helper\.rb$})           { 'test' }
-end
+require 'helper'
 
-guard :reek do
-  watch(%r{^lib/.+\.rb$})
-  watch('.reek.yml')
-end
-
-guard :rubocop do
-  watch(/.+\.rb$/)
-  watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+module Formats
+  class TestFable < UnitTest
+    def test_call
+      input = 'Some body content'
+      assert_same input, Formats::Raw.new(input).call
+    end
+  end
 end
