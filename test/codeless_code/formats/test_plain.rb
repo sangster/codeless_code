@@ -18,7 +18,7 @@
 require 'helper'
 
 module Formats
-  class TestFable < UnitTest
+  class TestPlain < UnitTest
     def test_basic_html
       assert_equal 'italic text', format('<i>italic</i> text')
       assert_equal 'bold text', format('<b>bold</b> text')

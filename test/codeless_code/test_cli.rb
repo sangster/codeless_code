@@ -32,6 +32,11 @@ class TestCli < UnitTest
     assert_output(expected) { cli.call }
   end
 
+  def test_force_stdout
+    expected = "00123  Test Case\n00234  Test Case 2\n"
+    assert_output(expected) { cli('-o', '-').call }
+  end
+
   def test_call_single_by_number
     [
       "    Test Case\n" \

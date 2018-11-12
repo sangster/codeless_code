@@ -18,7 +18,7 @@
 require 'helper'
 
 module Formats
-  class TestFable < UnitTest
+  class TestRaw < UnitTest
     def test_call
       input = 'Some body content'
       assert_same input, Formats::Raw.new(input).call
