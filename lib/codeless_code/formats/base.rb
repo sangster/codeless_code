@@ -15,7 +15,6 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
-require 'mediacloth'
 require 'nokogiri'
 
 module CodelessCode
@@ -30,24 +29,8 @@ module CodelessCode
 
       protected
 
-      def from_wiki(doc, parser_name)
-        parser = Parsers.const_get(parser_name).new(self)
-        MediaCloth.wiki_to_html(doc.to_s, generator: parser)
-      end
-    end
-
-    # MediaCloth expects XHTML-ish pages and chokes on ommited end tags
-    class XhtmlDoc
-      def self.parse(html)
-        new(Nokogiri::HTML(html))
-      end
-
-      def initialize(doc)
-        @doc = doc
-      end
-
-      def to_s
-        @doc.css('body > *').to_xhtml
+      def render_children(node)
+        node.children.map(&method(:render)).join
       end
     end
   end

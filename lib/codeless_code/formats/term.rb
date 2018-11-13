@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 require 'colorized_string'
-require 'mediacloth'
 
 module CodelessCode
   module Formats
@@ -24,31 +23,45 @@ module CodelessCode
     # colors, etc.
     class Term < Base
       def call
-        from_wiki
-      end
-
-      # :reek:UtilityFunction
-      def color(str)
-        ColorizedString.new(str)
-      end
-
-      protected
-
-      def from_wiki
-        super(XhtmlDoc.parse(regex_raw), :Term)
+        par = Markup::Parser.new(raw).call
+        Markup::Nodes.convert_html(par).map(&method(:render)).join.strip
       end
 
       private
 
-      def regex_raw
-        [
-          [%r{\s*//\w*$}, ''],
-          [/^\|   .*/, ColorizedString.new('\\0').green],
-          [%r{<i>([^<]+)</i>}mi, "''\\1''"],
-          [%r{<b>([^<]+)</b>}mi, "'''\\1'''"],
-          [%r{<a[^>]+>([^<]+)</a>}mi, '[[\1]]'],
-          [%r{/(\w+)/}, "''\\1''"]
-        ].inject(raw) { |str, args| str.gsub(*args) }
+      def render(node)
+        case node
+        when Markup::Nodes::Bold
+          color(render_children(node)).bold
+        when Markup::Nodes::Em
+          color(render_children(node)).italic
+        when Markup::Nodes::Reference
+          color(render_children(node)).yellow
+        when Markup::Nodes::Header
+          inner = render_children(node)
+          color(format("%s\n%s", inner, '-' * inner.length)).blue + "\n\n"
+        when Markup::Nodes::LineBreak
+          "\n"
+        when Markup::Nodes::Link
+          color(render_children(node)).underline
+        when Markup::Nodes::Para
+          render_children(node) + "\n\n"
+        when Markup::Nodes::Quote
+          render_children(node).lines
+                               .map { |line| "\t" + color(line).green }
+                               .join + "\n\n"
+        when Markup::Nodes::Rule
+          format("%s\n\n", color('- - - - - - - - - -').yellow)
+        when String
+          node
+        else
+          raise format('Unexpected %s: %p', node.class, node)
+        end
+      end
+
+      # :reek:UtilityFunction
+      def color(str)
+        ColorizedString.new(str.to_s)
       end
     end
   end

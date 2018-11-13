@@ -15,39 +15,45 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
-require 'mediacloth'
-
 module CodelessCode
   module Formats
     # Prints the {Fable} without any formatting, but removes the markup.
     class Plain < Base
       def call
-        raw.split("\n\n")
-           .map { |str| from_wiki(CleanupBody.new(str)) }
-           .join("\n\n")
+        par = Markup::Parser.new(raw).call
+        Markup::Nodes.convert_html(par).map(&method(:render)).join.strip
       end
 
-      protected
+      private
 
-      def from_wiki(str)
-        super(XhtmlDoc.parse(str.to_s), :Plain)
-      end
-    end
-
-    # Tidies up the mixed syntax found in fables
-    class CleanupBody
-      def initialize(body)
-        @body = body
-      end
-
-      def to_s
-        [
-          [%r{\s*//\w*$}, ''],
-          [%r{<i>([^<]+)</i>}mi, '\1'],
-          [%r{<b>([^<]+)</b>}mi, '\1'],
-          [%r{<a[^>]+>([^<]+)</a>}mi, '\1'],
-          [%r{/(\w+)/}, '\1']
-        ].inject(@body) { |str, args| str.gsub(*args) }
+      def render(node)
+        case node
+        when Markup::Nodes::Bold
+          render_children(node)
+        when Markup::Nodes::Em
+          render_children(node)
+        when Markup::Nodes::Reference
+          format('[%s]', render_children(node))
+        when Markup::Nodes::Header
+          inner = render_children(node)
+          format("%s\n%s", inner, '-' * inner.length) + "\n\n"
+        when Markup::Nodes::LineBreak
+          "\n"
+        when Markup::Nodes::Link
+          render_children(node)
+        when Markup::Nodes::Para
+          render_children(node) + "\n\n"
+        when Markup::Nodes::Quote
+          render_children(node).lines
+                               .map { |line| "\t" + line }
+                               .join + "\n\n"
+        when Markup::Nodes::Rule
+          '- - - - - - - - - -' + "\n\n"
+        when String
+          node
+        else
+          raise format('Unexpected %s: %p', node.class, node)
+        end
       end
     end
   end
