@@ -19,13 +19,15 @@ require 'nokogiri'
 
 module CodelessCode
   module Markup
+    # Parses the body of a {Fable}, including HTML, MediaWiki syntax, and custom
+    # syntax, and returns it as an HTML DOM.
     class Parser
       # [[href|title]] or [[title]]
       LINK_PATTERN = /\[\[(?:([^|]+)\|)?([^\]]+)\]\]/.freeze
 
-      ITALIC_PATTERN = %r{/([^/]+)/}.freeze  # /some text/
-      SUP_PATTERN = /{{([^}]+)}}/.freeze     # {{*}}
-      HR_PATTERN = /^- - -(?: -)*$/.freeze   # - - -
+      ITALIC_PATTERN = %r{/([^/]+)/}.freeze        # /some text/
+      SUP_PATTERN = /{{([^}]+)}}/.freeze           # {{*}}
+      HR_PATTERN = /^- - -(?: -)*$/.freeze         # - - -
       BR_PATTERN = %r{\s*//\s*(?:\n|$)}m.freeze    # end of line //
 
       attr_reader :doc
@@ -43,28 +45,30 @@ module CodelessCode
       private
 
       def paragraphs
-        doc.css('body')
-           .children
-           .flat_map(&method(:split_double_newline))
-           .reject { |node| node.inner_html.empty? }
+        @paragraphs ||=
+          doc.css('main')
+             .flat_map(&method(:split_double_newline))
+             .reject { |node| node.inner_html.empty? }
       end
 
       def split_double_newline(para)
         body = para.text? ? para.to_s : para.inner_html
-        paras = body.split(/\n\n+/)
 
-        case paras.size
-        when 0
-          new_elem(:span) << ''
-        when 1
-          if para.name == 'p' || para.name == 'div'
-            para
-          else
-            new_elem(:p) << para
-          end
+        case body.split(/\n\n+/).size
+        when 0 then new_elem(:span) << ''
+        when 1 then split_single_line(para)
         else
           str_node_set(format('<p><p>%s</p></p>',
                               body.gsub(/\n\n+/, '</p><p>')))
+        end
+      end
+
+      def split_single_line(para)
+        case para.name
+        when 'p'    then para
+        when 'main' then new_elem(:p) << para.children
+        else
+          new_elem(:p) << para
         end
       end
 
@@ -73,15 +77,14 @@ module CodelessCode
       end
 
       def str_node_set(str)
-        Nokogiri::HTML(format('<main>%s</main>', str)).css('body > main')
-                           .tap { |ns| ns.document = doc }
-                           .children
+        doc = Nokogiri::HTML(format('<main>%s</main>', str))
+        doc.css('body > main').tap { |ns| ns.document = doc }.children
       end
 
       def parse_paragraph(para)
         html = para.inner_html
 
-        if HR_PATTERN =~ html
+        if HR_PATTERN.match?(html)
           new_elem(:hr)
         elsif blockquote?(html)
           new_blockquote(html)
@@ -93,11 +96,13 @@ module CodelessCode
       end
 
       # Does every line start with the same number of spaces?
+      # :reek:UtilityFunction
       def blockquote?(html)
         match = /^\s+/.match(html)
         return unless match
 
-        html.lines.all? { |line| line.start_with?(match[0]) }
+        lines = html.lines
+        lines.size > 1 && lines.all? { |line| line.start_with?(match[0]) }
       end
 
       def new_blockquote(html)
@@ -109,42 +114,33 @@ module CodelessCode
 
       # @return [NodeSet]
       def parse_node(node)
-        nodes =
-          if node.text?
-            parse_text(node)
-          else
-            node.children
-                .map(&method(:parse_node))
-                .inject(new_elem(node.name)) { |elem, child| elem << child }
-          end
-        nodes
-        # new_elem(:span) << nodes
+        return parse_text(node) if node.text?
+
+        node.children
+            .map(&method(:parse_node))
+            .inject(new_elem(node.name)) { |elem, child| elem << child }
       end
 
       def parse_text(text_node)
-        text = text_node.content.dup
-        text = text.split(BR_PATTERN).map do |str|
-                 str.gsub(ITALIC_PATTERN) { new_elem(:em) << $1 }
-               end.join("//\n")
-
-        text.gsub!(BR_PATTERN) { new_elem(:br) }
-        text.gsub!(SUP_PATTERN) { new_elem(:sup) << $1 }
-        gsub_links!(text)
-        text.tr!("\n", ' ')
-        str_node_set(text)
-        # text_node.content.tap do |text|
-        #   text.gsub!(BR_PATTERN) { new_elem(:br) }
-        #   text.gsub!(ITALIC_PATTERN) { new_elem(:em) << $1 }
-        #   text.gsub!(SUP_PATTERN) { new_elem(:sup) << $1 }
-        #   gsub_links!(text)
-        #   text.tr!("\n", ' ')
-        # end
+        str_node_set(
+          gsub_links(
+            parse_slashes(text_node.content.dup)
+            .gsub(BR_PATTERN) { new_elem(:br) }
+            .gsub(SUP_PATTERN) { new_elem(:sup) << Regexp.last_match(1) }
+          ).tr("\n", ' ')
+        )
       end
 
-      def gsub_links!(text)
-        text.gsub!(LINK_PATTERN) do
-          (new_elem(:a) << $2).tap do |link|
-            link['href'] = $1 if $1
+      def parse_slashes(text)
+        text.split(BR_PATTERN).map do |str|
+          str.gsub(ITALIC_PATTERN) { new_elem(:em) << Regexp.last_match(1) }
+        end.join("//\n")
+      end
+
+      def gsub_links(text)
+        text.gsub(LINK_PATTERN) do
+          (new_elem(:a) << Regexp.last_match(2)).tap do |link|
+            link['href'] = Regexp.last_match(1) if Regexp.last_match(1)
           end
         end
       end

@@ -22,34 +22,29 @@ module Formats
   class TestTerm < UnitTest
     def test_basic_html
       assert_equal color('italic').italic + ' text',
-                   format('<i>italic</i> text')
+                   term('<i>italic</i> text')
       assert_equal color('bold').bold + ' text',
-                   format('<b>bold</b> text')
+                   term('<b>bold</b> text')
       assert_equal color('link').underline + ' text',
-                   format('<a href="url">link</a> text')
+                   term('<a href="url">link</a> text')
     end
 
     def test_custom_syntax
-      assert_equal color('italic').italic + ' text', format('/italic/ text')
+      assert_equal color('italic').italic + ' text', term('/italic/ text')
     end
 
     def test_custom_syntax__not_across_paragraphs
       input = ['not/italic', 'text/across paragraphs'].join("\n\n")
-      assert_equal input, format(input)
+      assert_equal input, term(input)
     end
 
     def test_line_breaks
-      assert_equal "line\nbreaks\n", format("line //\nbreaks //\n")
-    end
-
-    def test_remove_bad_html
-      assert_equal 'bad html', format('<a>bad html</b>')
-      assert_equal 'bad html', format('<a>bad html')
+      assert_equal "line\nbreaks", term("line //\nbreaks")
     end
 
     private
 
-    def format(body)
+    def term(body)
       Formats::Term.new(body).call.to_s
     end
 

@@ -17,38 +17,13 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 module CodelessCode
   module Markup
+    # Elements representing the markup of a Fable
+    # :reek:ModuleInitialize
     module Nodes
       ELEM_CONTAINERS = %i[Para Quote Bold Em Reference Header].freeze
       ELEM_VOID = %i[LineBreak Rule].freeze
 
-      def convert_html(elems)
-        elems.map do |elem|
-          if elem.text?
-            elem.content
-          else
-            case elem.name
-            when 'a' then Link.new(elem['href'], convert_html(elem.children))
-            when 'blockquote' then Quote.new(convert_html(elem.children))
-            when 'br' then LineBreak.new
-            when 'b' then Bold.new(convert_html(elem.children))
-            when 'div' then Para.new(convert_html(elem.children))
-            when 'em' then Em.new(convert_html(elem.children))
-            when 'h2' then Header.new(convert_html(elem.children))
-            when 'hr' then Rule.new
-            when 'i' then Em.new(convert_html(elem.children))
-            when 'p' then Para.new(convert_html(elem.children))
-            when 'span' then convert_html(elem.children)
-            when 'strong' then Bold.new(convert_html(elem.children))
-            when 'sup' then Reference.new(convert_html(elem.children))
-            when 'tt' then Bold.new(convert_html(elem.children))
-            else
-              raise format('Unexpected: %p', elem)
-            end
-          end
-        end
-      end
-      module_function :convert_html
-
+      # An element in the syntax tree
       class Node
         def initialize(children = nil)
           @children = children
@@ -75,6 +50,7 @@ module CodelessCode
         end)
       end
 
+      # A hyperlink. Either +<a href=""></a>+, +[[label]]+, or +[[label|url]]+
       class Link < Node
         attr_reader :href
 

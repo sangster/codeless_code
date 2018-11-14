@@ -22,41 +22,54 @@ module CodelessCode
     # Renders the {Fable} using ANSI control characters for bold, italics,
     # colors, etc.
     class Term < Base
+      include Markup::Nodes
+
       def call
         par = Markup::Parser.new(raw).call
-        Markup::Nodes.convert_html(par).map(&method(:render)).join.strip
+        Markup::Converter.new(par).call.map(&method(:render)).join.strip
       end
 
       private
 
       def render(node)
+        render_leaf(node) || render_container(node) || render_style(node) ||
+          raise(format('Unexpected %s: %p', node.class, node))
+      end
+
+      def render_leaf(node)
         case node
-        when Markup::Nodes::Bold
-          color(render_children(node)).bold
-        when Markup::Nodes::Em
-          color(render_children(node)).italic
-        when Markup::Nodes::Reference
-          color(render_children(node)).yellow
-        when Markup::Nodes::Header
-          inner = render_children(node)
-          color(format("%s\n%s", inner, '-' * inner.length)).blue + "\n\n"
-        when Markup::Nodes::LineBreak
-          "\n"
-        when Markup::Nodes::Link
-          color(render_children(node)).underline
-        when Markup::Nodes::Para
-          render_children(node) + "\n\n"
-        when Markup::Nodes::Quote
-          render_children(node).lines
-                               .map { |line| "\t" + color(line).green }
-                               .join + "\n\n"
-        when Markup::Nodes::Rule
-          format("%s\n\n", color('- - - - - - - - - -').yellow)
-        when String
-          node
-        else
-          raise format('Unexpected %s: %p', node.class, node)
+        when String    then node
+        when LineBreak then "\n"
+        when Rule      then format("%s\n\n", color('- - - - - - - - -').yellow)
         end
+      end
+
+      def render_style(node)
+        case node
+        when Bold      then color(render_children(node)).bold
+        when Em        then color(render_children(node)).italic
+        when Reference then color(render_children(node)).yellow
+        end
+      end
+
+      def render_container(node)
+        case node
+        when Header then render_header(node)
+        when Link   then color(render_children(node)).underline
+        when Para   then render_children(node) + "\n\n"
+        when Quote  then render_quote(node)
+        end
+      end
+
+      def render_header(node)
+        inner = render_children(node)
+        color(format("%s\n%s", inner, '-' * inner.length)).blue + "\n\n"
+      end
+
+      def render_quote(node)
+        render_children(node).lines
+                             .map { |line| "\t" + color(line).green }
+                             .join + "\n\n"
       end
 
       # :reek:UtilityFunction

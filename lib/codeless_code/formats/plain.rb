@@ -19,41 +19,48 @@ module CodelessCode
   module Formats
     # Prints the {Fable} without any formatting, but removes the markup.
     class Plain < Base
+      include Markup::Nodes
+
       def call
         par = Markup::Parser.new(raw).call
-        Markup::Nodes.convert_html(par).map(&method(:render)).join.strip
+        Markup::Converter.new(par).call.map(&method(:render)).join.strip
       end
 
       private
 
       def render(node)
+        render_leaf(node) || render_container(node) ||
+          raise(format('Unexpected %s: %p', node.class, node))
+      end
+
+      # :reek:UtilityFunction
+      def render_leaf(node)
         case node
-        when Markup::Nodes::Bold
-          render_children(node)
-        when Markup::Nodes::Em
-          render_children(node)
-        when Markup::Nodes::Reference
-          format('[%s]', render_children(node))
-        when Markup::Nodes::Header
-          inner = render_children(node)
-          format("%s\n%s", inner, '-' * inner.length) + "\n\n"
-        when Markup::Nodes::LineBreak
-          "\n"
-        when Markup::Nodes::Link
-          render_children(node)
-        when Markup::Nodes::Para
-          render_children(node) + "\n\n"
-        when Markup::Nodes::Quote
-          render_children(node).lines
-                               .map { |line| "\t" + line }
-                               .join + "\n\n"
-        when Markup::Nodes::Rule
-          '- - - - - - - - - -' + "\n\n"
-        when String
-          node
-        else
-          raise format('Unexpected %s: %p', node.class, node)
+        when String    then node
+        when LineBreak then "\n"
+        when Rule      then '- - - - - - - - - -' + "\n\n"
         end
+      end
+
+      def render_container(node)
+        case node
+        when Bold, Em, Link then render_children(node)
+        when Reference      then format('[%s]', render_children(node))
+        when Header         then render_header(node)
+        when Para           then render_children(node) + "\n\n"
+        when Quote          then render_quote(node)
+        end
+      end
+
+      def render_header(node)
+        inner = render_children(node)
+        format("%s\n%s", inner, '-' * inner.length) + "\n\n"
+      end
+
+      def render_quote(node)
+        render_children(node).lines
+                             .map { |line| "\t" + line }
+                             .join + "\n\n"
       end
     end
   end

@@ -41,9 +41,11 @@ module CodelessCode
     autoload  :Term,            'codeless_code/formats/term'
   end
 
+  # Parses the markup in a {Fable}
   module Markup
-    autoload  :Nodes,   'codeless_code/markup/nodes'
-    autoload  :Parser,  'codeless_code/markup/parser'
+    autoload  :Converter,  'codeless_code/markup/converter'
+    autoload  :Nodes,      'codeless_code/markup/nodes'
+    autoload  :Parser,     'codeless_code/markup/parser'
   end
 
   # The methods in which a {Fable fables's} body may be rendered as text.

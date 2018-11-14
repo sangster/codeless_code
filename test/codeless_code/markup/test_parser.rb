@@ -20,8 +20,8 @@ require 'helper'
 module Markup
   class TestParser < UnitTest
     def test_something
-      par = parser
-      nodes = Markup::Nodes.convert_html(par.parsed_paragraphs)
+      # par = parser
+      # nodes = Markup::Nodes.convert_html(par.parsed_paragraphs)
     end
 
     private
@@ -83,57 +83,6 @@ module Markup
 
         "I was thinking of your future, specifically," replied the
         abbot.
-
-        "If the sun does not rise, my future will be the least of my
-        concerns," said Shinpuru.  "If it does rise, then I expect
-        to greet it while enjoying a small bowl of rice and eel.
-        Unless I am wrong, in which case I will not."
-
-        The abbot smiled.  "It is true then, that the monk Shinpuru
-        plans for all contingencies.  This is also why I have come.
-        Of late there has been a shortage of abbots in the
-        Spider Clan.{{*}}  The Temple wishes to bestow upon you
-        the honor of promotion into our ranks."
-
-        "I am humbled," said Shinpuru, bowing again.
-
-        "The work is difficult," continued the abbot.  "Our day
-        begins well before sunrise, which you would seldom be able
-        to greet at your leisure, for there are many meetings to
-        attend and we run with our bowls from one to another.
-        Likewise you will not often see the sunset, except perhaps
-        on a webcam.  In exchange for this you will receive far
-        greater compensation from the Temple coffers, and the power
-        to direct the activities of the Temple itself."
-
-        "And what will become of 'Shinpuru, whose code is admired
-        throughout the Temple,' when he no longer codes?"
-        asked the monk.
-
-        "Fear not!" said the abbot. "You will do what you have
-        excelled at, only one level higher: Meta-Coding, if you
-        will.  Instead of design documents we produce long-term
-        plans; instead of software we churn out schedules; instead
-        of defects and features we speak of costs and benefits.  The
-        Temple itself is the machine we practice our arts upon,
-        refactoring it as we see fit."
-
-        "A most worthy cause," said Shinpuru, returning his
-        attention to his vines.  "I, too, have noticed the shortage
-        of abbots.  Such is the price of power.  For as the
-        seafaring matriarch [[Subashikoi]] once observed, the monks
-        may command the rigging and the masters may command the
-        monks, but it is the abbots who chart the course and hold
-        the tiller; so it is the abbots who are consigned to the
-        deep when the ship founders -- oftimes by their own crew."
-
-        "Only fools meet such a fate," said the abbot.  "And the
-        monk Shinpuru is no fool.  Unless /I/ am wrong, but I am
-        seldom wrong about such things."
-
-        "Then you will not think me a fool for declining the
-        Temple's generous offer," said Shinpuru, pruning a few
-        yellow leaves.
 
         The head abbot frowned.  "What would Shinpuru think of a
         seed that refused to sprout, or a tree that refused to yield
