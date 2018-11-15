@@ -22,8 +22,8 @@ module CodelessCode
       include Markup::Nodes
 
       def call
-        par = Markup::Parser.new(raw).call
-        Markup::Converter.new(par).call.map(&method(:render)).join.strip
+        main = Markup::Parser.new(raw).call
+        render(Markup::Converter.new(main).call).strip
       end
 
       private
@@ -44,11 +44,11 @@ module CodelessCode
 
       def render_container(node)
         case node
-        when Bold, Em, Link then render_children(node)
-        when Reference      then format('[%s]', render_children(node))
-        when Header         then render_header(node)
-        when Para           then render_children(node) + "\n\n"
-        when Quote          then render_quote(node)
+        when Doc, Bold, Em, Link then render_children(node)
+        when Reference           then format('[%s]', render_children(node))
+        when Header              then render_header(node)
+        when Para                then render_children(node) + "\n\n"
+        when Quote               then render_quote(node)
         end
       end
 

@@ -24,45 +24,54 @@ module CodelessCode
       'em' => Nodes::Em,
       'h2' => Nodes::Header,
       'i' => Nodes::Em,
+      'main' => Nodes::Doc,
       'p' => Nodes::Para,
+      'span' => Nodes::Para,
       'strong' => Nodes::Bold,
       'sup' => Nodes::Reference,
       'tt' => Nodes::Bold
     }.freeze
 
-    # Converts {Nokogiri} elements to {Markup::Node} elements
+    # Converts {Nokogiri} elements to {Nodes::Node} elements
     class Converter
-      def initialize(elems)
-        @elems = elems
+      def initialize(elem)
+        @elem = elem
       end
 
+      # @return [Nodes::Node]
       def call
-        @elems.map do |elem|
-          if elem.text?
-            elem.content
-          elsif (type = CONTAINER_HTML[elem.name])
-            type.new(self.class.new(elem.children).call)
-          else
-            convert_complex(elem)
-          end
-        end
+        convert_elem(@elem)
       end
 
       private
 
-      def convert_complex(elem)
+      # :reek:FeatureEnvy
+      def convert_elem(elem)
+        if elem.text?
+          elem.content
+        elsif (type = CONTAINER_HTML[elem.name])
+          type.new(convert_children(elem))
+        else
+          convert_special(elem)
+        end
+      end
+
+      def convert_children(elem)
+        elem.children.map { |ch| self.class.new(ch).call }
+      end
+
+      def convert_special(elem)
         case elem.name
         when 'a' then convert_link(elem)
         when 'br' then Nodes::LineBreak.new
         when 'hr' then Nodes::Rule.new
-        when 'span' then self.class.new(elem.children).call
         else
           raise format('Unexpected: %p', elem)
         end
       end
 
       def convert_link(elem)
-        Nodes::Link.new(elem['href'], self.class.new(elem.children).call)
+        Nodes::Link.new(elem['href'], convert_children(elem))
       end
     end
   end

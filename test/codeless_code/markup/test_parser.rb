@@ -18,16 +18,63 @@
 require 'helper'
 
 module Markup
-  class TestParser < UnitTest
-    def test_something
-      # par = parser
-      # nodes = Markup::Nodes.convert_html(par.parsed_paragraphs)
+  class TestParser < UnitTest # rubocop:disable Metrics/ClassLength
+    def test_name_is_main
+      assert_equal 'main', parse.name
+    end
+
+    def test_anchor
+      para = parse('[[label]]').child
+
+      assert_equal 'p', para.name
+      assert_equal 'a', para.child.name
+      assert_equal 'label', para.child.content
+    end
+
+    def test_link
+      link = parse('[[url|label]]').child.child
+
+      assert_equal 'a', link.name
+      assert_equal 'label', link.content
+      assert_equal 'url', link['href']
+    end
+
+    def test_italic
+      para = parse('/italic/').child
+
+      assert_equal 'p', para.name
+      assert_equal 'em', para.child.name
+      assert_equal 'italic', para.child.content
+    end
+
+    def test_sup
+      para = parse('{{ref}}').child
+
+      assert_equal 'p', para.name
+      assert_equal 'sup', para.child.name
+      assert_equal 'ref', para.child.content
+    end
+
+    def test_hr
+      rule = parse('- - - -').child
+
+      assert_equal 'hr', rule.name
+    end
+
+    def test_br
+      para = parse("first //\nsecond").child
+
+      assert_equal 'p', para.name
+      children = para.children
+      assert_equal 'first', children[0].content
+      assert_equal 'br', children[1].name
+      assert_equal 'second', children[2].content
     end
 
     private
 
-    def parser
-      Markup::Parser.new(fable.body)
+    def parse(body = nil)
+      Markup::Parser.new(body || fable.body).call
     end
 
     def fable(dir = 'en-test', fable = 'case-123.txt', root: fake_fs)

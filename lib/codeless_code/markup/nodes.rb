@@ -20,7 +20,7 @@ module CodelessCode
     # Elements representing the markup of a Fable
     # :reek:ModuleInitialize
     module Nodes
-      ELEM_CONTAINERS = %i[Para Quote Bold Em Reference Header].freeze
+      ELEM_CONTAINERS = %i[Doc Para Quote Bold Em Reference Header].freeze
       ELEM_VOID = %i[LineBreak Rule].freeze
 
       # An element in the syntax tree
@@ -50,7 +50,7 @@ module CodelessCode
         end)
       end
 
-      # A hyperlink. Either +<a href=""></a>+, +[[label]]+, or +[[label|url]]+
+      # A hyperlink. Either +<a href=""></a>+, +[[label]]+, or +[[url|label]]+
       class Link < Node
         attr_reader :href
 

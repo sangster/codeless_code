@@ -25,8 +25,11 @@ module CodelessCode
       include Markup::Nodes
 
       def call
-        par = Markup::Parser.new(raw).call
-        Markup::Converter.new(par).call.map(&method(:render)).join.strip
+        render(
+          Markup::Converter.new(
+            Markup::Parser.new(raw).call
+          ).call
+        ).strip
       end
 
       private
@@ -54,6 +57,7 @@ module CodelessCode
 
       def render_container(node)
         case node
+        when Doc    then render_children(node)
         when Header then render_header(node)
         when Link   then color(render_children(node)).underline
         when Para   then render_children(node) + "\n\n"

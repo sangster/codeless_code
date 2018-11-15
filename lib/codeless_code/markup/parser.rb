@@ -36,10 +36,14 @@ module CodelessCode
         @doc = Nokogiri::HTML(format('<main>%s</main>', str))
       end
 
+      # @return [Nokogiri::XML::Element] The body of the fable, with non-HTML
+      #   markup converted into HTML
       def call
-        paragraphs.map do |para|
-          parse_paragraph(para) unless para.inner_html.empty?
-        end.compact
+        new_elem(:main).tap do |main|
+          paragraphs.each do |para|
+            main << parse_paragraph(para) unless para.inner_html.empty?
+          end
+        end
       end
 
       private
@@ -58,8 +62,7 @@ module CodelessCode
         when 0 then new_elem(:span) << ''
         when 1 then split_single_line(para)
         else
-          str_node_set(format('<p><p>%s</p></p>',
-                              body.gsub(/\n\n+/, '</p><p>')))
+          str_node_set(format('<p>%s</p>', body.gsub(/\n\n+/, '</p><p>')))
         end
       end
 
