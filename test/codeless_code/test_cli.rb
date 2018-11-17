@@ -18,13 +18,26 @@
 require 'helper'
 require 'minitest/mock'
 
-class TestCli < UnitTest
+class TestCli < UnitTest # rubocop:disable Metrics/ClassLength
   def setup
     @pager = ENV.delete('PAGER')
   end
 
   def teardown
     ENV['PAGER'] = @pager
+  end
+
+  def test_bad_arguments
+    assert_output(nil, /unknown option `--unknown-flag'/) do
+      cli('--unknown-flag').call
+    end
+    assert_output(nil, /Usage: test_app/) do
+      cli('--unknown-flag').call
+    end
+  end
+
+  def test_bad_number
+    assert_raises(ArgumentError) { cli('--random-set', 'string').call }
   end
 
   def test_call_default
@@ -61,6 +74,42 @@ class TestCli < UnitTest
     assert_output("en  test\n") { cli('--list-translations').call }
   end
 
+  def test_random_stability
+    create_cases(10)
+    cli = cli('--random')
+
+    first  = capture_io { Random.srand(0) && cli.call }
+    second = capture_io { Random.srand(1) && cli.call }
+    third  = capture_io { Random.srand(0) && cli.call }
+
+    assert_equal first, third
+    refute_equal first, second
+  end
+
+  def test_random_set_stability
+    create_cases(10)
+    cli = cli('--random-set', '10')
+
+    first  = capture_io { Random.srand(0) && cli.call }
+    second = capture_io { Random.srand(1) && cli.call }
+    third  = capture_io { Random.srand(0) && cli.call }
+
+    assert_equal first, third
+    refute_equal first, second
+  end
+
+  def test_daily_stability
+    create_cases(10)
+    cli = cli('--daily')
+
+    first  = capture_io { stub_today('2018-12-23') { cli.call } }
+    second = capture_io { stub_today('2000-11-11') { cli.call } }
+    third  = capture_io { stub_today('2018-12-23') { cli.call } }
+
+    assert_equal first, third
+    refute_equal first, second
+  end
+
   private
 
   def cli(*args)
@@ -69,7 +118,11 @@ class TestCli < UnitTest
     end
   end
 
-  def fake_fs # rubocop:disable Metrics/MethodLength
+  def fake_fs
+    @fake_fs ||= create_fake_fs
+  end
+
+  def create_fake_fs # rubocop:disable Metrics/MethodLength
     FakeDir.new('/').tap do |fs|
       fs.create_path('en-test/case-123.txt', <<-FABLE)
         Title: Test Case
@@ -86,5 +139,20 @@ class TestCli < UnitTest
         body 2
       FABLE
     end
+  end
+
+  def create_cases(count)
+    (100..(100 + count)).each do |num|
+      fake_fs.create_path("en/test/case-#{num}.txt", <<-FABLE)
+        Title: Case #{num}
+        Number: #{num}
+
+        Case #{num}
+      FABLE
+    end
+  end
+
+  def stub_today(date, &blk)
+    Date.stub(:today, Date.parse(date), &blk)
   end
 end

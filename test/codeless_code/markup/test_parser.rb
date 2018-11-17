@@ -71,6 +71,13 @@ module Markup
       assert_equal 'second', children[2].content
     end
 
+    def test_quote
+      quote = parse("    Quote\n    Lines").child
+
+      assert_equal 'blockquote', quote.name
+      assert_equal 'Quote Lines', quote.content
+    end
+
     private
 
     def parse(body = nil)

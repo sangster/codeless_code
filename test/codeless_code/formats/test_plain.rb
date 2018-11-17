@@ -49,6 +49,22 @@ module Formats
       assert_equal 'bad html', plain('<a>bad html')
     end
 
+    def test_rule
+      assert_equal '- - - - - - - - -', plain('- - - - -')
+    end
+
+    def test_reference
+      assert_equal '[ref]', plain('{{ref}}')
+    end
+
+    def test_header
+      assert_equal "Some Header\n-----------", plain('== Some Header')
+    end
+
+    def test_quote
+      assert_equal "\tQuote Lines", plain("    Quote\n    Lines")
+    end
+
     private
 
     def plain(body)

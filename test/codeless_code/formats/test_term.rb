@@ -42,6 +42,23 @@ module Formats
       assert_equal "line\nbreaks", term("line //\nbreaks")
     end
 
+    def test_rule
+      assert_equal color('- - - - - - - - -').yellow, term('- - - - -')
+    end
+
+    def test_reference
+      assert_equal color('ref').yellow, term('{{ref}}')
+    end
+
+    def test_header
+      assert_equal color("Some Header\n-----------").blue,
+                   term('== Some Header')
+    end
+
+    def test_quote
+      assert_equal color('Quote Lines').green, term("    Quote\n    Lines")
+    end
+
     private
 
     def term(body)

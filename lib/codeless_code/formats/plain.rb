@@ -23,7 +23,7 @@ module CodelessCode
 
       def call
         main = Markup::Parser.new(raw).call
-        render(Markup::Converter.new(main).call).strip
+        render(Markup::Converter.new(main).call).rstrip
       end
 
       private
@@ -38,7 +38,7 @@ module CodelessCode
         case node
         when String    then node
         when LineBreak then "\n"
-        when Rule      then '- - - - - - - - - -' + "\n\n"
+        when Rule      then '- - - - - - - - -' + "\n\n"
         end
       end
 
