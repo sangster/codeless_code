@@ -40,7 +40,7 @@ module CodelessCode
       @body_pos = 0
     end
 
-    # @return [String] the actual story, including MediaWiki markup
+    # @return [String] the actual story, including markup
     def body
       @body ||= read_body.freeze
     end

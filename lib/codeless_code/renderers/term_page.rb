@@ -95,7 +95,7 @@ module CodelessCode
 
     # Ask an external application how wide our terminal is
     class TermWidth
-      def initialize(cmd = 'tputs cols')
+      def initialize(cmd = 'tput cols')
         @cmd = cmd
       end
 

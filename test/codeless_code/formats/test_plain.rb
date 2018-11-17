@@ -20,38 +20,54 @@ require 'helper'
 module Formats
   class TestPlain < UnitTest
     def test_basic_html
-      assert_equal 'italic text', format('<i>italic</i> text')
-      assert_equal 'bold text', format('<b>bold</b> text')
-      assert_equal 'link text', format('<a href="url">link</a> text')
+      assert_equal 'italic text', plain('<i>italic</i> text')
+      assert_equal 'bold text', plain('<b>bold</b> text')
+      assert_equal 'link text', plain('<a href="url">link</a> text')
     end
 
     def test_basic_html__not_across_paragraphs
       assert_equal ['not italic', 'text across paragraphs'].join("\n\n"),
-                   format(['not <i>italic',
-                           'text</i> across paragraphs'].join("\n\n"))
+                   plain(['not <i>italic',
+                          'text</i> across paragraphs'].join("\n\n"))
     end
 
     def test_custom_syntax
-      assert_equal 'italic text', format('/italic/ text')
+      assert_equal 'italic text', plain('/italic/ text')
     end
 
     def test_custom_syntax__not_across_paragraphs
       input = ['not/italic', 'text/across paragraphs'].join("\n\n")
-      assert_equal input, format(input)
+      assert_equal input, plain(input)
     end
 
     def test_line_breaks
-      assert_equal "line\nbreaks\n", format("line //\nbreaks //\n")
+      assert_equal "line\nbreaks", plain("line //\nbreaks")
     end
 
     def test_remove_bad_html
-      assert_equal 'bad html', format('<a>bad html</b>')
-      assert_equal 'bad html', format('<a>bad html')
+      assert_equal 'bad html', plain('<a>bad html</b>')
+      assert_equal 'bad html', plain('<a>bad html')
+    end
+
+    def test_rule
+      assert_equal '- - - - - - - - -', plain('- - - - -')
+    end
+
+    def test_reference
+      assert_equal '[ref]', plain('{{ref}}')
+    end
+
+    def test_header
+      assert_equal "Some Header\n-----------", plain('== Some Header')
+    end
+
+    def test_quote
+      assert_equal "\tQuote Lines", plain("    Quote\n    Lines")
     end
 
     private
 
-    def format(body)
+    def plain(body)
       Formats::Plain.new(body).call
     end
   end

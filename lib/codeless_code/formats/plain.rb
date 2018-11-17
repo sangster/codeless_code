@@ -15,39 +15,52 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
-require 'mediacloth'
-
 module CodelessCode
   module Formats
     # Prints the {Fable} without any formatting, but removes the markup.
     class Plain < Base
+      include Markup::Nodes
+
       def call
-        raw.split("\n\n")
-           .map { |str| from_wiki(CleanupBody.new(str)) }
-           .join("\n\n")
+        main = Markup::Parser.new(raw).call
+        render(Markup::Converter.new(main).call).rstrip
       end
 
-      protected
+      private
 
-      def from_wiki(str)
-        super(XhtmlDoc.parse(str.to_s), :Plain)
-      end
-    end
-
-    # Tidies up the mixed syntax found in fables
-    class CleanupBody
-      def initialize(body)
-        @body = body
+      def render(node)
+        render_leaf(node) || render_container(node) ||
+          raise(format('Unexpected %s: %p', node.class, node))
       end
 
-      def to_s
-        [
-          [%r{\s*//\w*$}, ''],
-          [%r{<i>([^<]+)</i>}mi, '\1'],
-          [%r{<b>([^<]+)</b>}mi, '\1'],
-          [%r{<a[^>]+>([^<]+)</a>}mi, '\1'],
-          [%r{/(\w+)/}, '\1']
-        ].inject(@body) { |str, args| str.gsub(*args) }
+      # :reek:UtilityFunction
+      def render_leaf(node)
+        case node
+        when String    then node
+        when LineBreak then "\n"
+        when Rule      then '- - - - - - - - -' + "\n\n"
+        end
+      end
+
+      def render_container(node)
+        case node
+        when Doc, Bold, Em, Link then render_children(node)
+        when Reference           then format('[%s]', render_children(node))
+        when Header              then render_header(node)
+        when Para                then render_children(node) + "\n\n"
+        when Quote               then render_quote(node)
+        end
+      end
+
+      def render_header(node)
+        inner = render_children(node)
+        format("%s\n%s", inner, '-' * inner.length) + "\n\n"
+      end
+
+      def render_quote(node)
+        render_children(node).lines
+                             .map { |line| "\t" + line }
+                             .join + "\n\n"
       end
     end
   end

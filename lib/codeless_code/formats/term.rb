@@ -16,39 +16,69 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 require 'colorized_string'
-require 'mediacloth'
 
 module CodelessCode
   module Formats
     # Renders the {Fable} using ANSI control characters for bold, italics,
     # colors, etc.
     class Term < Base
+      include Markup::Nodes
+
       def call
-        from_wiki
-      end
-
-      # :reek:UtilityFunction
-      def color(str)
-        ColorizedString.new(str)
-      end
-
-      protected
-
-      def from_wiki
-        super(XhtmlDoc.parse(regex_raw), :Term)
+        render(
+          Markup::Converter.new(
+            Markup::Parser.new(raw).call
+          ).call
+        ).strip
       end
 
       private
 
-      def regex_raw
-        [
-          [%r{\s*//\w*$}, ''],
-          [/^\|   .*/, ColorizedString.new('\\0').green],
-          [%r{<i>([^<]+)</i>}mi, "''\\1''"],
-          [%r{<b>([^<]+)</b>}mi, "'''\\1'''"],
-          [%r{<a[^>]+>([^<]+)</a>}mi, '[[\1]]'],
-          [%r{/(\w+)/}, "''\\1''"]
-        ].inject(raw) { |str, args| str.gsub(*args) }
+      def render(node)
+        render_leaf(node) || render_container(node) || render_style(node) ||
+          raise(format('Unexpected %s: %p', node.class, node))
+      end
+
+      def render_leaf(node)
+        case node
+        when String    then node
+        when LineBreak then "\n"
+        when Rule      then format("%s\n\n", color('- - - - - - - - -').yellow)
+        end
+      end
+
+      def render_style(node)
+        case node
+        when Bold      then color(render_children(node)).bold
+        when Em        then color(render_children(node)).italic
+        when Reference then color(render_children(node)).yellow
+        end
+      end
+
+      def render_container(node)
+        case node
+        when Doc    then render_children(node)
+        when Header then render_header(node)
+        when Link   then color(render_children(node)).underline
+        when Para   then render_children(node) + "\n\n"
+        when Quote  then render_quote(node)
+        end
+      end
+
+      def render_header(node)
+        inner = render_children(node)
+        color(format("%s\n%s", inner, '-' * inner.length)).blue + "\n\n"
+      end
+
+      def render_quote(node)
+        render_children(node).lines
+                             .map { |line| "\t" + color(line).green }
+                             .join + "\n\n"
+      end
+
+      # :reek:UtilityFunction
+      def color(str)
+        ColorizedString.new(str.to_s)
       end
     end
   end

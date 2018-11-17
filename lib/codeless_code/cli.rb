@@ -32,7 +32,6 @@ module CodelessCode
       call_io(user_io)
     rescue Slop::Error => err
       warn format("%s\n\n%s", err, options.help)
-      exit 1
     ensure
       user_io&.close
     end
@@ -98,6 +97,7 @@ module CodelessCode
       end
     end
 
+    # @return [Random] with a seed value determined by the current date
     # :reek:UtilityFunction
     def date_random_generator
       Random.new(::Date.today.strftime('%Y%m%d').to_i)

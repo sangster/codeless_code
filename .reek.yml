@@ -8,6 +8,8 @@ detectors:
     enabled: false
   LongParameterList:
     max_params: 4
+  RepeatedConditional:
+    enabled: false
   UtilityFunction:
     exclude:
       - CodelessCode::Filters::Headers::Base
