@@ -1,3 +1,3 @@
-[submodule "data"]
+[submodule "data/the-codeless-code"]
 	path = data
 	url = https://github.com/sangster/the-codeless-code.git
