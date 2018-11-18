@@ -108,6 +108,24 @@ namespace :lint do
   RuboCop::RakeTask.new
 end
 
+desc 'Render every fable in the given catalog'
+task :render_all, [:path] do |_task, args|
+  fables = CodelessCode::Catalog.new(Pathname.new(args[:path])).fables
+  fables.each do |fable|
+    puts fable.file
+    CodelessCode::Renderers::Fable
+      .new(fable)
+      .tap(&:for_list)
+      .tap { |r| r.for_pager(CodelessCode::Formats::Plain) }
+      .tap { |r| r.for_pager(CodelessCode::Formats::Term) }
+  rescue StandardError => err
+    warn format('Failed on %p', fable)
+    raise err
+  end
+
+  puts format('Rendered %d fables without error', fables.size)
+end
+
 desc 'Run all linters'
 task lint: ['lint:rubocop', 'lint:reek']
 

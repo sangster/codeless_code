@@ -24,12 +24,22 @@ module CodelessCode
       'em' => Nodes::Em,
       'h2' => Nodes::Header,
       'i' => Nodes::Em,
+      'li' => Nodes::Quote,
       'main' => Nodes::Doc,
+      'nobr' => Nodes::Em,
+      'ol' => Nodes::Para,
       'p' => Nodes::Para,
+      'php' => Nodes::Quote,
+      'table' => Nodes::Para,
+      'tr' => Nodes::Para,
+      'td' => Nodes::Para,
+      'pre' => Nodes::Quote,
       'span' => Nodes::Para,
       'strong' => Nodes::Bold,
+      'img' => Nodes::Bold,
       'sup' => Nodes::Reference,
-      'tt' => Nodes::Bold
+      'tt' => Nodes::Bold,
+      'ul' => Nodes::Para
     }.freeze
 
     # Converts {Nokogiri} elements to {Nodes::Node} elements
